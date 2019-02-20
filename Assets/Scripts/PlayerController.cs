@@ -19,29 +19,34 @@ public class PlayerController : MonoBehaviour {
     private GameObject bulletPrefab;
     private GameObject Muzzle;                  //銃口のゲームオブジェクト
     private Transform MuzzleTransform;          //銃口のTransform
-    private bool isShotRecharged;               //射撃の再装填フラグ
-    [SerializeField]private float shotTime;     //射撃レート
     private Vector3 shootForce;                 //射撃する際に加える力
     [SerializeField] private float bulletSpeed; //弾速
-    public float bulletDeathTime;              //弾丸の消失時間
+    public float bulletDeathTime;               //弾丸の消失時間
+    public float reloadTime;                    //リロード用のタイマー
+    [SerializeField] private float reloadInterval; //リロード間隔
 
     // Use this for initialization
     void Start () {
         playerRigidBody = GetComponent<Rigidbody>();
         Muzzle = GameObject.Find("PlayerMuzzle");
-        shotTime = shotTime / 60;
-        isShotRecharged = true;
         bulletDeathTime = 2;
+        reloadTime = reloadInterval;
 
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+
+    // Update is called once per frame
+    void FixedUpdate () {
         PlayerMove();
-        if (Input.GetKeyDown("space") && isShotRecharged == true)
+
+        ReloadTimer();
+
+        if (Input.GetKey("space"))
         {
             PlayerShot();
         }
+
+
+
     }
 
     //プレイヤーの移動に関する処理
@@ -68,23 +73,27 @@ public class PlayerController : MonoBehaviour {
     //プレイヤーの攻撃に関する処理
     void PlayerShot()
     {
-        //銃弾の生成
-        bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
-        MuzzleTransform = Muzzle.transform;
-        bullet = Instantiate(bulletPrefab, MuzzleTransform.position, MuzzleTransform.rotation) as GameObject;
+        if (reloadTime >= reloadInterval)
+        {
+            //リロードタイマーを0にする
+            reloadTime = 0.0f;
 
-        //銃弾に発射処理を行う。
-        shootForce = Muzzle.transform.forward * bulletSpeed;
-        bullet.GetComponent<Rigidbody>().AddForce(shootForce);
+            //銃弾の生成
+            bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
+            MuzzleTransform = Muzzle.transform;
+            bullet = Instantiate(bulletPrefab, MuzzleTransform.position, MuzzleTransform.rotation) as GameObject;
 
-        //射撃レートに基づいて再装填
-        isShotRecharged = false;
-        StartCoroutine("ShotWait");
-        isShotRecharged = true;
+            //銃弾に発射処理を行う。
+            shootForce = Muzzle.transform.forward * bulletSpeed;
+            bullet.GetComponent<Rigidbody>().AddForce(shootForce);
+
+        }
+
+
     }
 
-    private IEnumerator ShotWait()
+    void ReloadTimer()
     {
-        yield return new WaitForSeconds(shotTime);
+        reloadTime += Time.deltaTime;
     }
 }
