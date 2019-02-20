@@ -24,10 +24,14 @@ public class PlayerController : MonoBehaviour {
     public float bulletDeathTime;               //弾丸の消失時間
     public float reloadTime;                    //リロード用のタイマー
     [SerializeField] private float reloadInterval; //リロード間隔
+    public bool isAutoShot;                        //オートで射撃を行うか
 
     // Use this for initialization
-    void Start () {
+    void Start() {
+        //プレイヤー移動に関する初期処理
         playerRigidBody = GetComponent<Rigidbody>();
+
+        //射撃に関する初期処理
         Muzzle = GameObject.Find("PlayerMuzzle");
         bulletDeathTime = 2;
         reloadTime = reloadInterval;
@@ -35,12 +39,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate () {
+    void FixedUpdate() {
         PlayerMove();
 
         ReloadTimer();
 
-        if (Input.GetKey("space"))
+        //スペースを押している間orオート射撃がオンの際に射撃関数を実行する。
+        if (Input.GetKey("space") || isAutoShot == true)
         {
             PlayerShot();
         }
@@ -92,6 +97,7 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    //リロード時間計算のためのタイマー
     void ReloadTimer()
     {
         reloadTime += Time.deltaTime;
