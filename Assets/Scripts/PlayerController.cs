@@ -15,16 +15,30 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float upperLimitY;
 
     //プレイヤーの射撃に関する変数
-    private GameObject bullet;                  //生成する弾丸
-    private GameObject bulletPrefab;
-    private GameObject Muzzle;                  //銃口のゲームオブジェクト
-    private Transform MuzzleTransform;          //銃口のTransform
-    private Vector3 shootForce;                 //射撃する際に加える力
-    [SerializeField] private float bulletSpeed; //弾速
-    public float bulletDeathTime;               //弾丸の消失時間
-    public float reloadTime;                    //リロード用のタイマー
-    [SerializeField] private float reloadInterval; //リロード間隔
+    private GameObject bullet;                     //生成する弾丸
+    private GameObject bulletPrefab;               //弾丸のプレファブ
+    private GameObject Muzzle;                     //銃口のゲームオブジェクト
+    private Transform  MuzzleTransform;            //銃口のTransform
+    private Vector3 shootForce;                    //射撃する際に加える力
+    public float reloadTime;                       //リロード用のタイマー
     public bool isAutoShot;                        //オートで射撃を行うか
+
+    //弾丸の属性
+    private enum bulletSpecies
+    {
+        none = 0,
+        normal,
+        he,
+        ap,
+        beam,
+    };
+
+    //弾丸の情報
+    //private float bulletPower;                       //弾丸の威力
+    //private bulletSpecies currentBullet;             //弾丸の属性
+    private float bulletSpeed;                         //弾速
+    //private float bulletDeathTime;                   //弾丸の消失時間
+    private float bulletFireRate;                      //リロード間隔
 
     // Use this for initialization
     void Start() {
@@ -32,9 +46,17 @@ public class PlayerController : MonoBehaviour {
         playerRigidBody = GetComponent<Rigidbody>();
 
         //射撃に関する初期処理
+        //弾丸のプレハブをロード
+        bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
+
+        //弾丸のパラメータを事前取得
+        bulletFireRate = bulletPrefab.GetComponent<BulletController>().bulletFireRate;
+        //射撃レートを秒数に変換(レート/60秒/FixedUpdate50FPS)
+        bulletFireRate = bulletFireRate / 3000;
+        bulletSpeed = bulletPrefab.GetComponent<BulletController>().bulletSpeed;
+        //マズルを取得
         Muzzle = GameObject.Find("PlayerMuzzle");
-        bulletDeathTime = 2;
-        reloadTime = reloadInterval;
+        reloadTime = bulletFireRate;
 
     }
 
@@ -78,15 +100,16 @@ public class PlayerController : MonoBehaviour {
     //プレイヤーの攻撃に関する処理
     void PlayerShot()
     {
-        if (reloadTime >= reloadInterval)
+        //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
+        if (reloadTime >= bulletFireRate)
         {
             //リロードタイマーを0にする
             reloadTime = 0.0f;
 
             //銃弾の生成
-            bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
             MuzzleTransform = Muzzle.transform;
             bullet = Instantiate(bulletPrefab, MuzzleTransform.position, MuzzleTransform.rotation) as GameObject;
+
 
             //銃弾に発射処理を行う。
             shootForce = Muzzle.transform.forward * bulletSpeed;
