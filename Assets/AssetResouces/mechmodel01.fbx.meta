@@ -269,7 +269,9 @@ ModelImporter:
     4300108: R_CarbinRifle4
     4300110: LongRifle
     4300112: L_CarbinRifle2
-    7400000: Take 001
+    7400000: Double Shot Normal
+    7400002: Roll to Right
+    7400004: Roll to Left
     9500000: //RootNode
     13700000: Chest24
     13700002: Chest25
@@ -329,12 +331,27 @@ ModelImporter:
     7973541674914708976: R_CarbinRifle4
     7973541674914708978: TriLauncherL
     7973541674914708980: TriLauncherR
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_material
+    second: {fileID: 2100000, guid: 686b1f3f10affc142919c531348e8a24, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ThrusterLight
+    second: {fileID: 2100000, guid: a10d209b0b2cc6142a3a46832dbace75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Weapon_material
+    second: {fileID: 2100000, guid: 950675a99ec1595458e064fb8c27bbb9, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -358,10 +375,66 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: Double Shot Normal
       takeName: Take 001
-      firstFrame: 2
-      lastFrame: 19
+      firstFrame: 480
+      lastFrame: 485
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Roll to Right
+      takeName: Take 001
+      firstFrame: 340
+      lastFrame: 351
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Roll to Left
+      takeName: Take 001
+      firstFrame: 425
+      lastFrame: 431
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
