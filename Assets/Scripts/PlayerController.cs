@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class PlayerController : MonoBehaviour {
 
+
+
     //プレイヤーの移動に関する変数
     private float moveX;
     private float moveY;
