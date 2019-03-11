@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour {
         rollRecastTimer = rollRecastTime;
 
         //アニメーションに関する処理
-        playerModel =  GameObject.Find("mechmodel01");
+        playerModel =  GameObject.Find("mechmodel_0311v2");
         playerAnimator = playerModel.GetComponent<Animator>();
         currentRollDirection = 0;
 
@@ -220,4 +220,6 @@ public class PlayerController : MonoBehaviour {
         }
 
     }
+
+
 }
