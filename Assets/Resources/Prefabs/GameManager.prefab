@@ -63,5 +63,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b744f1436c3188746986088bb3dd7ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: 0
+  masterTime: 0
   booster: {fileID: 0}
-  boostTime: 5
+  boostTime: 10
+  purgeUI: {fileID: 0}
+  purgeUIduration: 0.7

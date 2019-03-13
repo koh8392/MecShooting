@@ -3,8 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+//メインウェポンの種類
+public enum WeaponState
+{
+    none = 0,
+    doubleMachineGun,
+    longRifle,
+
+
+}
+
+//サブウェポンの種類
+public enum SubWeaponState
+{
+    none = 0,
+    missilePod,
+    rocketLauncher,
+    cannon,
+    shield,
+
+
+}
+
+//弾丸の属性
+public enum BulletSpecies
+{
+    none = 0,
+    normal,
+    he,
+    ap,
+    beam,
+};
+
 public class PlayerController : MonoBehaviour {
 
+    private GeneralParameters generalParameters;
+    private GameState gameStateInstance;
 
 
     //プレイヤーの移動に関する変数
@@ -25,28 +59,34 @@ public class PlayerController : MonoBehaviour {
     private bool isRolling;                           //緊急回避状態かどうか
     private int currentRollDirection;
 
+    public float boostgage; //ブーストゲージ
+    [SerializeField] private float boostConsumption;
+
     //アニメーションに関する処理
     private GameObject playerModel;
     private Animator   playerAnimator;
 
     //プレイヤーの射撃に関する変数
-    private GameObject bullet;                     //生成する弾丸
+    private GameObject bullet01;                     //生成する弾丸
+    private GameObject bullet02;
     private GameObject bulletPrefab;               //弾丸のプレファブ
     private GameObject Muzzle;                     //銃口のゲームオブジェクト
     private Transform  MuzzleTransform;            //銃口のTransform
     private Vector3 shootForce;                    //射撃する際に加える力
-    private float reloadTimer;                       //リロード用のタイマー
+    private float reloadTimer;                     //リロード用のタイマー
     public bool isAutoShot;                        //オートで射撃を行うか
+    private WeaponState weaponState;               //武器の種類
+    private SubWeaponState subWeaponState;         //サブウェポンの種類
+    private GameObject doubleMG_L;
+    private GameObject doubleMG_R;
+    private Transform doubleMG_L_transform;
+    private Transform doubleMG_R_transform;
+    private Vector3 doubleMGL_bulletPos;
+    private Vector3 doubleMGR_bulletPos;
 
-    //弾丸の属性
-    private enum bulletSpecies
-    {
-        none = 0,
-        normal,
-        he,
-        ap,
-        beam,
-    };
+    public float magagineGage;                     //弾倉の残量
+    private float magagineConsumption;             //弾倉の発射時の消費量
+
 
     //弾丸の情報
     //private float bulletPower;                       //弾丸の威力
@@ -57,17 +97,26 @@ public class PlayerController : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        //ゲームの状態の確認
+        generalParameters = GetComponent<GeneralParameters>();
+
         //プレイヤー移動に関する初期処理
         playerRigidBody = GetComponent<Rigidbody>();
         isRolling = false;
         rollRecastTimer = rollRecastTime;
 
         //アニメーションに関する処理
-        playerModel =  GameObject.Find("mechmodel_0311v2");
+        playerModel = GameObject.Find("mechmodel");
         playerAnimator = playerModel.GetComponent<Animator>();
+        playerAnimator.SetBool("rolltoLeft", false);
+        playerAnimator.SetBool("rolltoRight", false);
+        playerAnimator.SetBool("Doubleshot_shot", false);
         currentRollDirection = 0;
 
         //射撃に関する初期処理
+        //武器の種類を設定
+        weaponState = WeaponState.doubleMachineGun;
+
         //弾丸のプレハブをロード
         bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
 
@@ -80,17 +129,63 @@ public class PlayerController : MonoBehaviour {
         Muzzle = GameObject.Find("PlayerMuzzle");
         reloadTimer = bulletFireRate;
 
+        boostgage = 0.0f;
+
+        doubleMG_L = GameObject.Find("L_CarbinRifle2");
+        doubleMG_L_transform = doubleMG_L.GetComponent<Transform>();
+        doubleMG_R = GameObject.Find("R_CarbinRifle4");
+        doubleMG_R_transform = doubleMG_R.GetComponent<Transform>();
+
+        switch (weaponState) {
+
+            case WeaponState.doubleMachineGun:
+                magagineConsumption = 8;
+                break;
+            case WeaponState.longRifle:
+                magagineConsumption = 20;
+                break;
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        GetState();
         Roll();
         PlayerMove();
         Timer();
         PlayerShot();
+        AnimationControll();
+        BoostGageCharger();
+    }
 
+    private void GetState()
+    {
+        //毎フレームゲッターから全体のゲームステートを取得
+        gameStateInstance = generalParameters.gameStateClone;
+    }
 
+    private void AnimationControll()
+    {
+        if(gameStateInstance == GameState.play)
+        {
+            playerAnimator.SetBool("set_Play", true);
+            Debug.Log("モーション遷移処理を開始します");
+        }
+
+    }
+
+    private void BoostGageCharger()
+    {
+        if (boostgage < 100)
+        {
+            boostgage += 1;
+        }
+
+        if (magagineGage < 100)
+        {
+            boostgage += 2;
+        }
     }
 
     //プレイヤーの移動に関する処理
@@ -125,19 +220,40 @@ public class PlayerController : MonoBehaviour {
         {
             //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
 
-            if (reloadTimer >= bulletFireRate)
+            if (reloadTimer >= bulletFireRate && magagineGage >= magagineConsumption)
             {
-                //リロードタイマーを0にする
-                reloadTimer = 0.0f;
 
-                //銃弾の生成
-                MuzzleTransform = Muzzle.transform;
-                bullet = Instantiate(bulletPrefab, MuzzleTransform.position, MuzzleTransform.rotation) as GameObject;
+                if (weaponState == WeaponState.doubleMachineGun)
+                {
+                    //リロードタイマーを0にする
+                    reloadTimer = 0.0f;
 
+                    magagineGage -= magagineConsumption; 
 
-                //銃弾に発射処理を行う。
-                shootForce = Muzzle.transform.forward * bulletSpeed;
-                bullet.GetComponent<Rigidbody>().AddForce(shootForce);
+                    MuzzleTransform = Muzzle.transform;
+
+                    //左の銃弾の生成
+                    doubleMGL_bulletPos = new Vector3(doubleMG_L_transform.position.x + 2.5f,
+                                                      doubleMG_L_transform.position.y,
+                                                      doubleMG_L_transform.position.z + 2.0f);
+                    bullet01 = Instantiate(bulletPrefab, doubleMGL_bulletPos, MuzzleTransform.rotation) as GameObject;
+
+                    //右の銃弾の生成
+                    doubleMGR_bulletPos = new Vector3(doubleMG_R_transform.position.x - 2.5f,
+                                                      doubleMG_R_transform.position.y,
+                                                      doubleMG_R_transform.position.z + 2.0f);
+                    bullet02 = Instantiate(bulletPrefab, doubleMGR_bulletPos, MuzzleTransform.rotation) as GameObject;
+
+                    //銃弾に発射処理を行う。
+                    shootForce = Muzzle.transform.forward * bulletSpeed;
+                    bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
+
+                    //銃弾に発射処理を行う。
+                    shootForce = Muzzle.transform.forward * bulletSpeed;
+                    bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
+
+                    playerAnimator.SetBool("Doubleshot_shot", true);
+                }
 
             }
 
@@ -159,12 +275,14 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey(KeyCode.Space)){
 
             //緊急回避がチャージされていれば処理を実行
-            if(rollRecastTimer >= rollRecastTime && isRolling == false)
+            if(boostgage >= boostConsumption && isRolling == false)
             {
                 Debug.Log("緊急回避処理を開始");
 
                 //緊急回避中かのフラグをオンに
                 isRolling = true;
+
+                boostgage = boostgage - boostConsumption;
 
                 //移動方向がマイナスであればロール距離もマイナスに変換
                 if (moveX < 0)
@@ -207,10 +325,8 @@ public class PlayerController : MonoBehaviour {
     private IEnumerator RollReset()
     {
         //緊急回避処理完了後にフラグをオフ
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.1f);
         isRolling = false;
-        //緊急回避用のタイマーを0に
-        rollRecastTimer = 0;
         switch (currentRollDirection)
         {
             case 1:
