@@ -52,6 +52,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b11ca5e6f80024881ed18f9e8a137d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boostGageSliderObject: {fileID: 0}
+  magazineGageSliderObject: {fileID: 0}
+  boostGageAlertValue: 30
+  magazineGageAlertValue: 20
 --- !u!114 &114449511141629224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -66,6 +70,6 @@ MonoBehaviour:
   gameState: 0
   masterTime: 0
   booster: {fileID: 0}
-  boostTime: 10
+  boostTime: 5
   purgeUI: {fileID: 0}
   purgeUIduration: 0.7

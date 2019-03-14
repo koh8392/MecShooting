@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour {
     private bool isRolling;                           //緊急回避状態かどうか
     private int currentRollDirection;
 
-    public float boostgage; //ブーストゲージ
+    public float boostGage; //ブーストゲージ
     [SerializeField] private float boostConsumption;
 
     //アニメーションに関する処理
@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 doubleMGL_bulletPos;
     private Vector3 doubleMGR_bulletPos;
 
-    public float magagineGage;                     //弾倉の残量
+    public float magazineGage;                     //弾倉の残量
     private float magagineConsumption;             //弾倉の発射時の消費量
 
 
@@ -129,17 +129,21 @@ public class PlayerController : MonoBehaviour {
         Muzzle = GameObject.Find("PlayerMuzzle");
         reloadTimer = bulletFireRate;
 
-        boostgage = 0.0f;
+        //ブーストゲージと弾倉ゲージの初期値を設定
+        boostGage = 0.0f;
+        magazineGage = 0.0f;
 
+        //ダブルショット時の武器のオブジェクトの取得
         doubleMG_L = GameObject.Find("L_CarbinRifle2");
         doubleMG_L_transform = doubleMG_L.GetComponent<Transform>();
         doubleMG_R = GameObject.Find("R_CarbinRifle4");
         doubleMG_R_transform = doubleMG_R.GetComponent<Transform>();
 
+        //初期の武器に応じて武器のエネルギー使用量を決定
         switch (weaponState) {
-
+            
             case WeaponState.doubleMachineGun:
-                magagineConsumption = 8;
+                magagineConsumption = 12;
                 break;
             case WeaponState.longRifle:
                 magagineConsumption = 20;
@@ -175,16 +179,17 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    //時間で回復するパラメーターの回復処理
     private void BoostGageCharger()
     {
-        if (boostgage < 100)
+        if (boostGage < 100)
         {
-            boostgage += 1;
+            boostGage += 1;
         }
 
-        if (magagineGage < 100)
+        if (magazineGage < 100)
         {
-            boostgage += 2;
+            magazineGage += 1;
         }
     }
 
@@ -220,7 +225,7 @@ public class PlayerController : MonoBehaviour {
         {
             //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
 
-            if (reloadTimer >= bulletFireRate && magagineGage >= magagineConsumption)
+            if (reloadTimer >= bulletFireRate && magazineGage >= magagineConsumption)
             {
 
                 if (weaponState == WeaponState.doubleMachineGun)
@@ -228,7 +233,7 @@ public class PlayerController : MonoBehaviour {
                     //リロードタイマーを0にする
                     reloadTimer = 0.0f;
 
-                    magagineGage -= magagineConsumption; 
+                    magazineGage -= magagineConsumption; 
 
                     MuzzleTransform = Muzzle.transform;
 
@@ -275,14 +280,14 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey(KeyCode.Space)){
 
             //緊急回避がチャージされていれば処理を実行
-            if(boostgage >= boostConsumption && isRolling == false)
+            if(boostGage >= boostConsumption && isRolling == false)
             {
                 Debug.Log("緊急回避処理を開始");
 
                 //緊急回避中かのフラグをオンに
                 isRolling = true;
 
-                boostgage = boostgage - boostConsumption;
+                boostGage = boostGage - boostConsumption;
 
                 //移動方向がマイナスであればロール距離もマイナスに変換
                 if (moveX < 0)

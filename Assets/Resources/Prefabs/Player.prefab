@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1070917945870692
 GameObject:
   m_ObjectHideFlags: 1
@@ -1150,7 +1150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1515914099227168
 GameObject:
   m_ObjectHideFlags: 1
@@ -1475,7 +1475,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1648702773921266
 GameObject:
   m_ObjectHideFlags: 1
@@ -1650,7 +1650,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1713530869804918
 GameObject:
   m_ObjectHideFlags: 1
@@ -1717,7 +1717,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1719892718659900
 GameObject:
   m_ObjectHideFlags: 1
@@ -1796,7 +1796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1741511523580072
 GameObject:
   m_ObjectHideFlags: 1
@@ -2067,7 +2067,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1893251574391782
 GameObject:
   m_ObjectHideFlags: 1
@@ -6613,8 +6613,10 @@ MonoBehaviour:
   upperLimitY: 8
   rollRecastTime: 1
   rollDistance: 10
-  boostgage: 0
+  boostGage: 0
+  boostConsumption: 50
   isAutoShot: 0
+  magazineGage: 0
 --- !u!114 &114603348850314842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7116,7 +7118,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 686b1f3f10affc142919c531348e8a24, type: 2}
+  - {fileID: 2100000, guid: 75a3520641540c74b8d066e5af0f5ef3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
