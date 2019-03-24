@@ -7,8 +7,10 @@ using DG.Tweening;
 public class DestroyMesh : MonoBehaviour {
     //private Rigidbody[] partsRigidbodyArray;
 
-	// Use this for initialization
-	void Start () {
+    //Vector3 boostPosition;
+
+    // Use this for initialization
+    void Start () {
         //StartCoroutine("SetCollapse");
 	}
 	
@@ -26,8 +28,9 @@ public class DestroyMesh : MonoBehaviour {
     public IEnumerator SetCollapseCoroutine() {
         Debug.Log("破壊処理を予約");
         yield return new WaitForSeconds(1.0f);
+        Vector3 boostPosition = GetComponent<Transform>().position;
         //ブースター自体を切り離し後方に移動開始
-        gameObject.transform.DOLocalMoveZ(-10.0f, 2.0f).SetEase(Ease.OutCirc);
+        gameObject.transform.DOLocalMove(new Vector3(0,boostPosition.y - 3.0f,boostPosition.z - 3.0f), 2.0f).SetEase(Ease.OutCirc);
         yield return new WaitForSeconds(1.0f);
         CollapseObject();
     }

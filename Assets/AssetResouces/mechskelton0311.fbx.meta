@@ -464,6 +464,8 @@ ModelImporter:
     7400038: ShoulderShot_shoot
     7400040: Booster_toset
     7400042: Booster_set
+    7400044: Move_Right
+    7400046: Move_Left
     9500000: //RootNode
     13700000: Chest24
     13700002: Chest25
@@ -579,7 +581,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
+    previousCalculatedGlobalScale: 1
     hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60

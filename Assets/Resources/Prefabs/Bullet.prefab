@@ -139,6 +139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPower: 10
   currentBullet: 1
-  bulletSpeed: 2500
+  bulletSpeed: 5000
   bulletDeathTime: 2
   bulletFireRate: 300

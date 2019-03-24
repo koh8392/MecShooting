@@ -1,0 +1,475 @@
+fileFormatVersion: 2
+guid: d7b0c913cd259ae4291e16b278da5f9b
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: MainCannon_L_Bottom
+    100004: MainCannon_L_Upper
+    100006: MainCannon_R_Bottom
+    100008: MainCannon_R_Upper
+    100010: pCube1
+    100012: pCube10
+    100014: pCube10 1
+    100016: pCube10 2
+    100018: pCube10 3
+    100020: pCube11
+    100022: pCube11 1
+    100024: pCube11 2
+    100026: pCube11 3
+    100028: pCube12
+    100030: pCube12 1
+    100032: pCube12 2
+    100034: pCube12 3
+    100036: pCube13
+    100038: pCube13 1
+    100040: pCube13 2
+    100042: pCube13 3
+    100044: pCube14
+    100046: pCube15
+    100048: pCube16
+    100050: pCube17
+    100052: pCube18
+    100054: pCube19
+    100056: pCube7
+    100058: pCube9
+    100060: pCylinder1
+    100062: pCylinder10
+    100064: pCylinder11
+    100066: pCylinder12
+    100068: pCylinder6
+    100070: pCylinder7
+    100072: pCylinder8
+    100074: pCylinder9
+    100076: pPlane1
+    100078: pPlane3
+    100080: pPlane4
+    100082: Bridge
+    100084: Container_L
+    100086: Container_R
+    100088: ContainerWing_L
+    100090: ContainerWing_R
+    100092: DeckBody
+    100094: FuelTank_L
+    100096: FuelTank_L1
+    100098: FuelTank_L2
+    100100: FuelTank_R
+    100102: FuelTank_R1
+    100104: FuelTank_R2
+    100106: GuideBeaconPlane
+    100108: GuideBeaconPlaneL
+    100110: GuideBeaconPlaneR
+    100112: Hull_L
+    100114: Hull_R
+    100116: mainCannon
+    100118: MainCannon_L_Bottom1
+    100120: MainCannon_L_Bottom2
+    100122: MainCannon_L_Bottom3
+    100124: MainCannon_L_Bottom4
+    100126: MainCannon_L_Upper1
+    100128: MainCannon_L_Upper2
+    100130: MainCannon_L_Upper3
+    100132: MainCannon_L_Upper4
+    100134: MainCannon_R_Bottom1
+    100136: MainCannon_R_Bottom2
+    100138: MainCannon_R_Bottom3
+    100140: MainCannon_R_Bottom4
+    100142: MainCannon_R_Upper1
+    100144: MainCannon_R_Upper2
+    100146: MainCannon_R_Upper3
+    100148: MainCannon_R_Upper4
+    100150: MainEngine
+    100152: MainEngine1
+    400000: //RootNode
+    400002: MainCannon_L_Bottom
+    400004: MainCannon_L_Upper
+    400006: MainCannon_R_Bottom
+    400008: MainCannon_R_Upper
+    400010: pCube1
+    400012: pCube10
+    400014: pCube10 1
+    400016: pCube10 2
+    400018: pCube10 3
+    400020: pCube11
+    400022: pCube11 1
+    400024: pCube11 2
+    400026: pCube11 3
+    400028: pCube12
+    400030: pCube12 1
+    400032: pCube12 2
+    400034: pCube12 3
+    400036: pCube13
+    400038: pCube13 1
+    400040: pCube13 2
+    400042: pCube13 3
+    400044: pCube14
+    400046: pCube15
+    400048: pCube16
+    400050: pCube17
+    400052: pCube18
+    400054: pCube19
+    400056: pCube7
+    400058: pCube9
+    400060: pCylinder1
+    400062: pCylinder10
+    400064: pCylinder11
+    400066: pCylinder12
+    400068: pCylinder6
+    400070: pCylinder7
+    400072: pCylinder8
+    400074: pCylinder9
+    400076: pPlane1
+    400078: pPlane3
+    400080: pPlane4
+    400082: Bridge
+    400084: Container_L
+    400086: Container_R
+    400088: ContainerWing_L
+    400090: ContainerWing_R
+    400092: DeckBody
+    400094: FuelTank_L
+    400096: FuelTank_L1
+    400098: FuelTank_L2
+    400100: FuelTank_R
+    400102: FuelTank_R1
+    400104: FuelTank_R2
+    400106: GuideBeaconPlane
+    400108: GuideBeaconPlaneL
+    400110: GuideBeaconPlaneR
+    400112: Hull_L
+    400114: Hull_R
+    400116: mainCannon
+    400118: MainCannon_L_Bottom1
+    400120: MainCannon_L_Bottom2
+    400122: MainCannon_L_Bottom3
+    400124: MainCannon_L_Bottom4
+    400126: MainCannon_L_Upper1
+    400128: MainCannon_L_Upper2
+    400130: MainCannon_L_Upper3
+    400132: MainCannon_L_Upper4
+    400134: MainCannon_R_Bottom1
+    400136: MainCannon_R_Bottom2
+    400138: MainCannon_R_Bottom3
+    400140: MainCannon_R_Bottom4
+    400142: MainCannon_R_Upper1
+    400144: MainCannon_R_Upper2
+    400146: MainCannon_R_Upper3
+    400148: MainCannon_R_Upper4
+    400150: MainEngine
+    400152: MainEngine1
+    2100000: ShipMainMat
+    2100002: EnemyThrusterLight
+    2100004: guideBeaconMat
+    2300000: pCube1
+    2300002: pCube10
+    2300004: pCube10 1
+    2300006: pCube10 2
+    2300008: pCube10 3
+    2300010: pCube11
+    2300012: pCube11 1
+    2300014: pCube11 2
+    2300016: pCube11 3
+    2300018: pCube12
+    2300020: pCube12 1
+    2300022: pCube12 2
+    2300024: pCube12 3
+    2300026: pCube13
+    2300028: pCube13 1
+    2300030: pCube13 2
+    2300032: pCube13 3
+    2300034: pCube14
+    2300036: pCube15
+    2300038: pCube16
+    2300040: pCube17
+    2300042: pCube18
+    2300044: pCube19
+    2300046: pCube7
+    2300048: pCube9
+    2300050: pCylinder1
+    2300052: pCylinder10
+    2300054: pCylinder11
+    2300056: pCylinder12
+    2300058: pCylinder6
+    2300060: pCylinder7
+    2300062: pCylinder8
+    2300064: pCylinder9
+    2300066: pPlane1
+    2300068: pPlane3
+    2300070: pPlane4
+    2300072: Bridge
+    2300074: Container_L
+    2300076: Container_R
+    2300078: ContainerWing_L
+    2300080: ContainerWing_R
+    2300082: DeckBody
+    2300084: FuelTank_L
+    2300086: FuelTank_L1
+    2300088: FuelTank_L2
+    2300090: FuelTank_R
+    2300092: FuelTank_R1
+    2300094: FuelTank_R2
+    2300096: GuideBeaconPlane
+    2300098: GuideBeaconPlaneL
+    2300100: GuideBeaconPlaneR
+    2300102: Hull_L
+    2300104: Hull_R
+    2300106: mainCannon
+    2300108: MainCannon_L_Bottom1
+    2300110: MainCannon_L_Bottom2
+    2300112: MainCannon_L_Bottom3
+    2300114: MainCannon_L_Bottom4
+    2300116: MainCannon_L_Upper1
+    2300118: MainCannon_L_Upper2
+    2300120: MainCannon_L_Upper3
+    2300122: MainCannon_L_Upper4
+    2300124: MainCannon_R_Bottom1
+    2300126: MainCannon_R_Bottom2
+    2300128: MainCannon_R_Bottom3
+    2300130: MainCannon_R_Bottom4
+    2300132: MainCannon_R_Upper1
+    2300134: MainCannon_R_Upper2
+    2300136: MainCannon_R_Upper3
+    2300138: MainCannon_R_Upper4
+    2300140: MainEngine
+    2300142: MainEngine1
+    3300000: pCube1
+    3300002: pCube10
+    3300004: pCube10 1
+    3300006: pCube10 2
+    3300008: pCube10 3
+    3300010: pCube11
+    3300012: pCube11 1
+    3300014: pCube11 2
+    3300016: pCube11 3
+    3300018: pCube12
+    3300020: pCube12 1
+    3300022: pCube12 2
+    3300024: pCube12 3
+    3300026: pCube13
+    3300028: pCube13 1
+    3300030: pCube13 2
+    3300032: pCube13 3
+    3300034: pCube14
+    3300036: pCube15
+    3300038: pCube16
+    3300040: pCube17
+    3300042: pCube18
+    3300044: pCube19
+    3300046: pCube7
+    3300048: pCube9
+    3300050: pCylinder1
+    3300052: pCylinder10
+    3300054: pCylinder11
+    3300056: pCylinder12
+    3300058: pCylinder6
+    3300060: pCylinder7
+    3300062: pCylinder8
+    3300064: pCylinder9
+    3300066: pPlane1
+    3300068: pPlane3
+    3300070: pPlane4
+    3300072: Bridge
+    3300074: Container_L
+    3300076: Container_R
+    3300078: ContainerWing_L
+    3300080: ContainerWing_R
+    3300082: DeckBody
+    3300084: FuelTank_L
+    3300086: FuelTank_L1
+    3300088: FuelTank_L2
+    3300090: FuelTank_R
+    3300092: FuelTank_R1
+    3300094: FuelTank_R2
+    3300096: GuideBeaconPlane
+    3300098: GuideBeaconPlaneL
+    3300100: GuideBeaconPlaneR
+    3300102: Hull_L
+    3300104: Hull_R
+    3300106: mainCannon
+    3300108: MainCannon_L_Bottom1
+    3300110: MainCannon_L_Bottom2
+    3300112: MainCannon_L_Bottom3
+    3300114: MainCannon_L_Bottom4
+    3300116: MainCannon_L_Upper1
+    3300118: MainCannon_L_Upper2
+    3300120: MainCannon_L_Upper3
+    3300122: MainCannon_L_Upper4
+    3300124: MainCannon_R_Bottom1
+    3300126: MainCannon_R_Bottom2
+    3300128: MainCannon_R_Bottom3
+    3300130: MainCannon_R_Bottom4
+    3300132: MainCannon_R_Upper1
+    3300134: MainCannon_R_Upper2
+    3300136: MainCannon_R_Upper3
+    3300138: MainCannon_R_Upper4
+    3300140: MainEngine
+    3300142: MainEngine1
+    4300000: pCube1
+    4300002: pCylinder1
+    4300004: pCube7
+    4300006: pCube9
+    4300008: pCube12
+    4300010: pCube11
+    4300012: pCube10
+    4300014: pCube13
+    4300016: pCube12
+    4300018: pCube11
+    4300020: pCube10
+    4300022: pCube13
+    4300024: pCube15
+    4300026: pCube17
+    4300028: pCube19
+    4300030: pCylinder7
+    4300032: pCylinder9
+    4300034: pCylinder11
+    4300036: pCube12
+    4300038: pCube11
+    4300040: pCube10
+    4300042: pCube13
+    4300044: pCube12
+    4300046: pCube11
+    4300048: pCube10
+    4300050: pCube13
+    4300052: pCylinder6
+    4300054: pCylinder8
+    4300056: pCube18
+    4300058: pCylinder10
+    4300060: pCube16
+    4300062: pCube14
+    4300064: pCylinder12
+    4300066: pPlane1
+    4300068: pPlane4
+    4300070: pPlane3
+    4300072: DeckBody
+    4300074: MainEngine
+    4300076: mainCannon
+    4300078: Bridge
+    4300080: MainCannon_L_Bottom1
+    4300082: MainCannon_L_Bottom2
+    4300084: MainCannon_L_Bottom3
+    4300086: MainCannon_L_Bottom4
+    4300088: MainCannon_L_Upper1
+    4300090: MainCannon_L_Upper2
+    4300092: MainCannon_L_Upper3
+    4300094: MainCannon_L_Upper4
+    4300096: Container_R
+    4300098: ContainerWing_R
+    4300100: Hull_R
+    4300102: FuelTank_R2
+    4300104: FuelTank_R1
+    4300106: FuelTank_R
+    4300108: MainCannon_R_Upper1
+    4300110: MainCannon_R_Upper2
+    4300112: MainCannon_R_Upper3
+    4300114: MainCannon_R_Upper4
+    4300116: MainCannon_R_Bottom1
+    4300118: MainCannon_R_Bottom2
+    4300120: MainCannon_R_Bottom3
+    4300122: MainCannon_R_Bottom4
+    4300124: FuelTank_L2
+    4300126: FuelTank_L1
+    4300128: Hull_L
+    4300130: FuelTank_L
+    4300132: ContainerWing_L
+    4300134: Container_L
+    4300136: MainEngine1
+    4300138: GuideBeaconPlane
+    4300140: GuideBeaconPlaneR
+    4300142: GuideBeaconPlaneL
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EnemyThrusterLight
+    second: {fileID: 2100000, guid: 0529b39d24d04384580755a2a91e46a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ShipMainMat
+    second: {fileID: 2100000, guid: b215a04a3a170a74790e3a51741f5678, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: guideBeaconMat
+    second: {fileID: 2100000, guid: 91e14eed5ec6414479758fad0338bbe3, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1000
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

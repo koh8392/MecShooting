@@ -2,23 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+using System.Linq;
+using GameParameters;
 
-public class UIcontroller : MonoBehaviour {
+public class UIcontroller :  MonoBehaviour {
     //プレイヤーのオブジェクトを取得
     private GameObject player;
+    private GameState currentGameState;
 
     //オートモードに関する変数
     private bool isAutoModeSelected; //オートモードかどうかのフラグ
     private bool isSelected; //オートモードの変更処理完了のフラグ
 
     //ブーストゲージに関する変数
-    private GameObject boostGageSliderObject; //ブーストゲージUIのオブジェクト
+    private GameObject boostUI; //ブーストゲージUIのオブジェクト
     private GameObject boostGageFill;                         //ブーストゲージのゲージ部分
     private float boostGageValue;　　　　　　　　　　　　　　 //ブーストゲージの残量
     private Image boostGageFillImage;                         //ブーストゲージのimageコンポーネント 色変更に使用
     private Slider boostGageSlider;                           //ブーストゲージのSliderコンポーネント
 
-    private GameObject magazineGageSliderObject; //弾倉ゲージUIのオブジェクト
+    private GameObject magazineUI; //弾倉ゲージUIのオブジェクト
     private GameObject magazineGageFill;                          //弾倉ゲージのゲージ部分
     private float magazineGageValue;                              //弾倉ゲージの残量
     private Image magazineGageFillImage;                          //弾倉ゲージのimageコンポーネント 色変更に使用
@@ -28,35 +32,137 @@ public class UIcontroller : MonoBehaviour {
     [SerializeField] private float boostGageAlertValue; //ブーストゲージの色変更の閾値
     [SerializeField] private float magazineGageAlertValue;//弾倉ゲージの色変更の閾値
 
+    //ブースターのパージに関する処理
+    private GameObject purgeUI;                  //パージ予告表示のUI
+    private CanvasGroup purgeUICanvas;           //パージUIのcanvas
+    private float purgeUIalpha;                  //パージUIのalpha
+    private bool isPurgeUIStarted;               //パージ予告処理を開始したかのフラグ
+    private float purgeUIduration; 　　　　　　　//パージUIの点滅時間
+    private float purgeUIEndDuration;            //パージUIの終了時間
+
+    private float boostRemainTime;
+    private float initBoostTime;
+    private Text boostRemainTimeText;
+    private CanvasGroup boostUICanvas;
+    private float boostUIalpha;
+
+    private CanvasGroup playUI;
+    private CanvasGroup battleStartUI;
+
+    private RectTransform boostUItransform;
+    private Vector2 defaultBoostUIposition;
+
+    private RectTransform magazineUItransform;
+    private Vector2 defaultMagazineUIposition;
+
+    //private RectTransform UItransform;
+    //private Vector2 defaultUIposition;
+
+    private Text inputText;
+    private Text timeText;
+
+    //以下、UIの透明度の初期化ユーティリティ
+    [SerializeField] [Range(0, 1)] private float purgeUIdefaultalpha; //
+    [SerializeField] [Range(0, 1)] private float boostUIdefaultalpha; //
+    [SerializeField] [Range(0, 1)] private float playUIdefaultalpha; //
+    //[Range(0, 1)] private float UIdefaultalpha; //
+    //[Range(0, 1)] private float UIdefaultalpha; //
+
+    Vector2[] defaultPositionArray;
+
+
+
     // Use this for initialization
     void Start() {
+        //
         isAutoModeSelected　= false;
         player = GameObject.Find("Player");
         playerController = player.GetComponent<PlayerController>();
+        currentGameState = GameManager.gameState;
+
+        inputText = GameObject.Find("inputUI").GetComponent<Text>();
+        timeText = GameObject.Find("timeUI").GetComponent<Text>();
+
+        //パージUIの取得処理]
+        purgeUI = GameObject.Find("PurgeUI");
+        purgeUICanvas = purgeUI.GetComponent<CanvasGroup>();
+        isPurgeUIStarted = false;
+        purgeUIduration = GetComponent<GameManager>().purgeUIduration;
+        purgeUIEndDuration = purgeUIduration * 3;
 
         //ブーストゲージのUI、コンポーネントを取得
-        boostGageSliderObject = GameObject.Find("BoostGage");
+        boostUI = GameObject.Find("BoostGage");
+
         boostGageFill = GameObject.Find("boostFill");
         boostGageFillImage = boostGageFill.gameObject.GetComponent<Image>();
-        boostGageSlider = boostGageSliderObject.GetComponent<Slider>();
+        boostGageSlider = boostUI.GetComponent<Slider>();
 
         //弾倉ゲージのUI、コンポーネントを取得
-        magazineGageSliderObject = GameObject.Find("MagazineGage");
+        magazineUI = GameObject.Find("MagazineGage");
         magazineGageFill = GameObject.Find("magazineFill");
         magazineGageFillImage = magazineGageFill.gameObject.GetComponent<Image>();
-        magazineGageSlider = magazineGageSliderObject.GetComponent<Slider>();
+        magazineGageSlider = magazineUI.GetComponent<Slider>();
 
+        //ブースト残り時間関連のテキストを取得
+        boostRemainTimeText = GameObject.Find("BoostTimeText").GetComponent<Text>();
+        initBoostTime = GameObject.Find("GameManager").GetComponent<GameManager>().boostTime;
+        boostUICanvas = GameObject.Find("BoostUI").GetComponent<CanvasGroup>();
+        boostRemainTime = 0;
 
+        playUI = GameObject.Find("PlayUI").GetComponent<CanvasGroup>();
+
+        battleStartUI = GameObject.Find("battlestartUI").GetComponent<CanvasGroup>();
+
+        playUI.gameObject.GetComponentsInChildren<PlayUITag>().ToList().ForEach(ui =>
+        {
+            RectTransform uiPosition = ui.gameObject.GetComponent<RectTransform>();
+            Vector2 defaultuiposition = uiPosition.anchoredPosition;
+            //defaultPositionArray.Resize(ref numbers, numbers.Length + 1);
+            //numbers[numbers.Length - 1] = 7;
+
+            uiPosition.anchoredPosition = new Vector2(0.0f, 0.0f);
+            //配列に獲得したdefaultpositionを格納→スタートのタイミングで呼び出し
+
+            Sequence seq = DOTween.Sequence();
+            seq.Join(
+            uiPosition.DOAnchorPos(defaultuiposition, 0.5f)).SetDelay(7.5f);
+        });
+
+        //以下、UIの透明度の初期化処理
+        purgeUI.GetComponent<CanvasGroup>().alpha = purgeUIdefaultalpha;
+        boostUICanvas.GetComponent<CanvasGroup>().alpha = boostUIdefaultalpha;
+        playUI.GetComponent<CanvasGroup>().alpha = playUIdefaultalpha;
     }
 
     // Update is called once per frame
     void Update() {
-        BoostManage();
-        MagazineManage();
+        ManageBoostgage();
+        ManageMagazinegage();
+        ManageBoostTime();
+
+        inputText.text = playerController.moveX.ToString();
+        timeText.text = GameManager.masterTime.ToString("f0");
+    }
+
+    //ブースト残り時間の表示
+    private void ManageBoostTime()
+    {
+        if (boostRemainTime >= 0)
+        {
+            boostRemainTime = initBoostTime - GameManager.masterTime;
+            boostRemainTimeText.text = boostRemainTime.ToString();
+        }
+
+        if (boostRemainTime < 0)
+        {
+            boostRemainTime = initBoostTime - GameManager.masterTime;
+            boostRemainTimeText.text = 0.0f.ToString();
+        }
+
     }
 
     //ブーストゲージの管理処理
-    private void BoostManage() {
+    private void ManageBoostgage() {
         //ブーストゲージの値をplayerから取得して変更
         boostGageValue = playerController.boostGage;
         boostGageSlider.value = boostGageValue;
@@ -73,7 +179,7 @@ public class UIcontroller : MonoBehaviour {
     }
 
     //弾倉ゲージの管理処理
-    private void MagazineManage() {
+    private void ManageMagazinegage() {
         //弾倉ゲージの値をplayerから取得して変更
         magazineGageValue = playerController.magazineGage;
         magazineGageSlider.value = magazineGageValue;
@@ -87,6 +193,61 @@ public class UIcontroller : MonoBehaviour {
         {
             magazineGageFillImage.color = new Color(108.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 120.0f / 255.0f);
         }
+    }
+
+
+    public void StartBoostUI()
+    {
+        //マスタータイマーがブースト時間以降かつフラグがオフの場合実行
+        if (isPurgeUIStarted == false)
+        {
+            
+            //パージ時のUIの点滅処理
+            purgeUIalpha = purgeUICanvas.alpha;
+
+            //canvasgroupの透明度に対してDoFadeでTween
+            purgeUICanvas.DOFade(1.0f, purgeUIduration).SetLoops(3);
+
+            StartCoroutine("FadeOutUI");
+
+            //パージが実行されたかのフラグをオン
+            isPurgeUIStarted = true;
+
+           
+        }
+    }
+
+    public IEnumerator FadeOutUI()
+    {
+        yield return new WaitForSeconds(purgeUIEndDuration);
+        Debug.Log("UI点滅終了処理開始");
+        //canvasgroupの透明度に対してDoFadeでTween
+
+        purgeUIalpha = purgeUICanvas.alpha;
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(
+        purgeUICanvas.DOFade(0.0f, 1.0f));
+
+        seq.Join(
+        boostUICanvas.DOFade(0.0f, 1.0f)).AppendInterval(0.3f);
+
+        seq.Join(
+        battleStartUI.DOFade(1.0f, 0.15f).SetEase(Ease.Flash).SetLoops(3)).AppendInterval(1f);
+
+        seq.Append(
+        battleStartUI.DOFade(0.0f, 0.6f));
+
+        seq.Join(
+        playUI.DOFade(1.0f, 0.7f));
+
+        //seq.Join(
+        //boostUItransform.DOAnchorPos(defaultBoostUIposition, 0.5f));
+
+        //seq.Join(
+        //magazineUItransform.DOAnchorPos(defaultMagazineUIposition, 0.5f));
+
+
     }
 
     //オート射撃モードをオンにする関数
