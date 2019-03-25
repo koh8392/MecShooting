@@ -17,22 +17,23 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody playerRigidBody;               //プレイヤーの物理判定
     Vector3 playerPosition;                          //プレイヤーの現在位置
 
-    [SerializeField] private float limitX;
-    [SerializeField] private float bottomLimitY;
-    [SerializeField] private float upperLimitY;
+    [SerializeField] private float limitX;           //プレイヤーの横方向の移動可能範囲
+    private float negativeLimitX;                    //プレイヤーの左方向の移動可能範囲(自動で合わせる)
+    [SerializeField] private float bottomLimitY;     //プレイヤーの下方向の移動可能範囲
+    [SerializeField] private float upperLimitY;      //プレイヤーの上方向の移動可能範囲
 
     private float rollRecastTimer;                    //緊急回避のタイマー
-    [SerializeField] private float rollRecastTime;     //緊急回避の間隔
-    [SerializeField] private float rollDistance;       //緊急回避の想定距離
+    [SerializeField] private float rollRecastTime;    //緊急回避の間隔
+    [SerializeField] private float rollDistance;      //緊急回避の想定距離
     private float finallyRollDistance;                //緊急回避の最終移動距離
     private bool isRolling;                           //緊急回避状態かどうか
-    private int currentRollDirection;
+    private int currentRollDirection;                 //緊急回避の方向。0で右方向、1で左方向
 
     public float boostGage; //ブーストゲージ
     [SerializeField] private float boostConsumption;
 
     //アニメーションに関する処理
-    private GameObject playerModel;
+    private GameObject playerModel;               //プレイヤーの3Dモデル
     private Animator playerAnimator;
     public bool isAnimationChanged;
     public float moveMotionTimer;
@@ -40,8 +41,8 @@ public class PlayerController : MonoBehaviour {
     public bool isMoveAnimationChanged;
 
     //プレイヤーの射撃に関する変数
-    private GameObject bullet01;                     //生成する弾丸
-    private GameObject bullet02;
+    private GameObject bullet01;                   //生成する弾丸
+    private GameObject bullet02;　　　　　　　　　 //ダブルショットの場合2発目の弾丸
     private GameObject bulletPrefab;               //弾丸のプレファブ
     private GameObject Muzzle;                     //銃口のゲームオブジェクト
     private Transform  MuzzleTransform;            //銃口のTransform
@@ -50,12 +51,14 @@ public class PlayerController : MonoBehaviour {
     public bool isAutoShot;                        //オートで射撃を行うか
     private WeaponState weaponState;               //武器の種類
     private SubWeaponState subWeaponState;         //サブウェポンの種類
-    private GameObject doubleMG_L;
-    private GameObject doubleMG_R;
-    private Transform doubleMG_L_transform;
-    private Transform doubleMG_R_transform;
+    private GameObject doubleMG_L;                //ダブルマシンガンのオブジェクト(左)
+    private GameObject doubleMG_R;                //ダブルマシンガンのオブジェクト(右)
+    private Transform doubleMG_L_transform;       //ダブルマシンガンのトランスフォーム(右)
+    private Transform doubleMG_R_transform;       //ダブルマシンガンのトランスフォーム(左)
     private Vector3 doubleMGL_bulletPos;
     private Vector3 doubleMGR_bulletPos;
+    private int weapon01Cunsumption;              //武器１のマガジン消費量 
+    private int weapon02Cunsumption;              //武器２のマガジン消費量
 
     public float magazineGage;                     //弾倉の残量
     private float magagineConsumption;             //弾倉の発射時の消費量
@@ -70,22 +73,38 @@ public class PlayerController : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-
-        //プレイヤー移動に関する初期処理
-        playerRigidBody = GetComponent<Rigidbody>();
-        isRolling = false;
-        rollRecastTimer = rollRecastTime;
+        //ゲームステートの変更を感知するため、ゲームステートの初期値を取得
         currentGameState = GameManager.gameState;
 
-    　　//アニメーションに関する処理
+
+        /*プレイヤー移動に関する初期処理*/
+        //プレイヤーのrigidbodyを取得
+        playerRigidBody = GetComponent<Rigidbody>();
+        isRolling = false;
+
+        rollRecastTimer = rollRecastTime;
+
    　　 playerModel = GameObject.Find("mechmodel");
+
+        /*プレイヤー移動に関する初期処理ここまで*/
+
+        /*アニメーションに関する処理*/
         playerAnimator = playerModel.GetComponent<Animator>();
+
+        //アニメーターのフラグを初期化
         playerAnimator.SetBool("rolltoLeft", false);
         playerAnimator.SetBool("rolltoRight", false);
         playerAnimator.SetBool("Doubleshot_shot", false);
+        
+        //緊急回避の初期方向を設定 
         currentRollDirection = 0;
+
+        //アニメーション変更中のフラグをオフ
         isAnimationChanged = false;
+        //移動時のアニメーション変更中のフラグをオフ
         isMoveAnimationChanged = false;
+
+        /*アニメーションに関する処理ここまで*/
 
         //射撃に関する初期処理
         //武器の種類を設定
@@ -115,12 +134,12 @@ public class PlayerController : MonoBehaviour {
 
         //初期の武器に応じて武器のエネルギー使用量を決定
         switch (weaponState) {
-            
+
             case WeaponState.doubleMachineGun:
-                magagineConsumption = 12;
+                magagineConsumption = weapon01Cunsumption;
                 break;
             case WeaponState.longRifle:
-                magagineConsumption = 20;
+                magagineConsumption = weapon02Cunsumption;
                 break;
         }
     }
