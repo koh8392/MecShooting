@@ -24,8 +24,8 @@ public class GameManager : MonoBehaviour {
     private GameObject mainCameraObject;         //メインカメラのオブジェクト
     private Camera mainCamera;                   //メインカメラのコンポーネント
     private DestroyMesh destroyMesh;             //ブースターのパージ処理
-    [SerializeField] public float boostTime;    //開幕のブースト時間
-    private GameObject purgeUI; //パージ予告表示のUI
+    [SerializeField] public float boostTime;     //開幕のブースト時間
+    private GameObject purgeUI;                  //パージ予告表示のUI
     private CanvasGroup purgeUICanvas;           //パージUIのcanvas
     private float purgeUIalpha;                  //パージUIのalpha
     private bool isPurgeUIStarted;               //パージ予告処理を開始したかのフラグ

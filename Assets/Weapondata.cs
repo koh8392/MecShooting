@@ -26,4 +26,7 @@ public class WeaponStatus
     //読み込む弾丸
     public string bulletPrefabName;
 
+    //弾丸のエネルギー消費量
+    public int bulletConsumption;
+
 }

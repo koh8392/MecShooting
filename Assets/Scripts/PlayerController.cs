@@ -14,8 +14,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] public float playerMoveSpeedX; //横方向の移動スピード
     [SerializeField] public float playerMoveSpeedY; //縦方向の移動スピード
     [SerializeField] public float playerMoveSpeedZ; //縦方向の移動スピード
-    private Rigidbody playerRigidBody;               //プレイヤーの物理判定
-    Vector3 playerPosition;                          //プレイヤーの現在位置
+    private Rigidbody playerRigidBody;              //プレイヤーの物理判定
+    Vector3 playerPosition;                         //プレイヤーの現在位置
 
     [SerializeField] private float limitX;           //プレイヤーの横方向の移動可能範囲
     private float negativeLimitX;                    //プレイヤーの左方向の移動可能範囲(自動で合わせる)
@@ -59,14 +59,13 @@ public class PlayerController : MonoBehaviour {
     public bool isAutoShot;                        //オートで射撃を行うか
     private WeaponState weaponState;               //武器の種類
     private SubWeaponState subWeaponState;         //サブウェポンの種類
-    private GameObject doubleMG_L;                //ダブルマシンガンのオブジェクト(左)
-    private GameObject doubleMG_R;                //ダブルマシンガンのオブジェクト(右)
-    private Transform doubleMG_L_transform;       //ダブルマシンガンのトランスフォーム(右)
-    private Transform doubleMG_R_transform;       //ダブルマシンガンのトランスフォーム(左)
+    private GameObject doubleMG_L;                 //ダブルマシンガンのオブジェクト(左)
+    private GameObject doubleMG_R;                 //ダブルマシンガンのオブジェクト(右)
+    private Transform doubleMG_L_transform;        //ダブルマシンガンのトランスフォーム(右)
+    private Transform doubleMG_R_transform;        //ダブルマシンガンのトランスフォーム(左)
     private Vector3 doubleMGL_bulletPos;
     private Vector3 doubleMGR_bulletPos;
-    [SerializeField]private int weapon01Cunsumption;              //武器１のマガジン消費量 
-    [SerializeField]private int weapon02Cunsumption;              //武器２のマガジン消費量
+    private int bulletConsumption;              //武器１のマガジン消費量 
 
     public float magazineGage;                     //弾倉の残量
     private float magazineConsumption;             //弾倉の発射時の消費量
@@ -151,16 +150,8 @@ public class PlayerController : MonoBehaviour {
         doubleMG_R = transform.Find("mechmodel/R_CarbinRifle").gameObject;
         doubleMG_R_transform = doubleMG_R.GetComponent<Transform>();
 
-        //初期の武器に応じて武器のエネルギー使用量を決定
-        switch (weaponState) {
-
-            case WeaponState.doubleMachineGun:
-                magazineConsumption = weapon01Cunsumption;
-                break;
-            case WeaponState.longRifle:
-                magazineConsumption = weapon02Cunsumption;
-                break;
-        }
+        //呼び出された武器に応じて武器のエネルギー使用量を決定
+        magazineConsumption = bulletConsumption;
     }
 
     // Update is called once per frame
