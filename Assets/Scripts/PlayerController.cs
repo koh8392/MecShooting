@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
     private float rollRecastTimer;                    //緊急回避のタイマー
     [SerializeField] private float rollRecastTime;    //緊急回避の間隔
     [SerializeField] private float rollDistance;      //緊急回避の想定距離
+    private float negativeRollDistance;               //左方向の緊急回避の距離(計算用)
     private float finallyRollDistance;                //緊急回避の最終移動距離
     private bool isRolling;                           //緊急回避状態かどうか
     private int currentRollDirection;                 //緊急回避の方向。0で右方向、1で左方向
@@ -32,13 +33,20 @@ public class PlayerController : MonoBehaviour {
     public float boostGage; //ブーストゲージ
     [SerializeField] private float boostConsumption;
 
-    //アニメーションに関する処理
+    //アニメーションに関する変数
     private GameObject playerModel;               //プレイヤーの3Dモデル
     private Animator playerAnimator;
     public bool isAnimationChanged;
     public float moveMotionTimer;
     [SerializeField] private float moveRecastTime;
     public bool isMoveAnimationChanged;
+
+    //パーティクルに関する変数
+    [SerializeField]
+    private List<GameObject> particleStarterL_List;
+    [SerializeField]
+    private List<GameObject> particleStarterR_List;
+
 
     //プレイヤーの射撃に関する変数
     private GameObject bullet01;                   //生成する弾丸
@@ -57,11 +65,11 @@ public class PlayerController : MonoBehaviour {
     private Transform doubleMG_R_transform;       //ダブルマシンガンのトランスフォーム(左)
     private Vector3 doubleMGL_bulletPos;
     private Vector3 doubleMGR_bulletPos;
-    private int weapon01Cunsumption;              //武器１のマガジン消費量 
-    private int weapon02Cunsumption;              //武器２のマガジン消費量
+    [SerializeField]private int weapon01Cunsumption;              //武器１のマガジン消費量 
+    [SerializeField]private int weapon02Cunsumption;              //武器２のマガジン消費量
 
     public float magazineGage;                     //弾倉の残量
-    private float magagineConsumption;             //弾倉の発射時の消費量
+    private float magazineConsumption;             //弾倉の発射時の消費量
 
 
     //弾丸の情報
@@ -86,6 +94,8 @@ public class PlayerController : MonoBehaviour {
 
    　　 playerModel = GameObject.Find("mechmodel");
 
+        negativeLimitX = -limitX;
+        negativeRollDistance = -rollDistance;
         /*プレイヤー移動に関する初期処理ここまで*/
 
         /*アニメーションに関する処理*/
@@ -103,6 +113,15 @@ public class PlayerController : MonoBehaviour {
         isAnimationChanged = false;
         //移動時のアニメーション変更中のフラグをオフ
         isMoveAnimationChanged = false;
+
+        //ロール時に使用するパーティクルを取得
+        //thrusterParticleStarter_R = GameObject.Find("thrusterEffectR").GetComponent<ParticleStarter>();
+
+        //リスト内に格納されたオブジェクトそれぞれにパーティクル動作開始メソッドを実行
+        foreach(GameObject particleStarterChildren in particleStarterL_List)
+        {
+            particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+        }
 
         /*アニメーションに関する処理ここまで*/
 
@@ -136,10 +155,10 @@ public class PlayerController : MonoBehaviour {
         switch (weaponState) {
 
             case WeaponState.doubleMachineGun:
-                magagineConsumption = weapon01Cunsumption;
+                magazineConsumption = weapon01Cunsumption;
                 break;
             case WeaponState.longRifle:
-                magagineConsumption = weapon02Cunsumption;
+                magazineConsumption = weapon02Cunsumption;
                 break;
         }
     }
@@ -163,6 +182,14 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void LateUpdate()
+    {
+        if (GameManager.gameState == GameState.play)
+        {
+            ModifyPlayerPosition();
+        }
+    }
+
     private void StateManager()
     {
         //保存しているゲームステートとGameManagerのゲームステートが異なる場合。
@@ -172,7 +199,7 @@ public class PlayerController : MonoBehaviour {
             switch(GameManager.gameState)
             {
                 case GameState.play:
-                playerAnimator.SetBool("set_Play", true);
+                playerAnimator.SetBool("DoubleShot_set", true);
                 break;
 
                 case GameState.boosted:
@@ -213,6 +240,15 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void ModifyPlayerPosition()
+    {
+
+        //プレイヤーの位置を取得
+        playerPosition = new Vector3(Mathf.Clamp(playerRigidBody.position.x, negativeLimitX, limitX), Mathf.Clamp(playerRigidBody.position.y, bottomLimitY, upperLimitY), 0);
+
+        gameObject.transform.localPosition = playerPosition;
+    }
+
     //プレイヤーの移動に関する処理
     void PlayerMove()
     {
@@ -248,17 +284,17 @@ public class PlayerController : MonoBehaviour {
 
             gameObject.transform.Translate((moveX * playerMoveSpeedX), (moveY * playerMoveSpeedY),0,Space.Self);
 
-/*
-            //プレイヤーが次に動く座標を設定
-            playerPosition = new Vector3(
-                //座標の計算。Clampを使用して次の位置をlimit内に収める。
-                Mathf.Clamp(playerRigidBody.position.x + (moveX * playerMoveSpeedX), -limitX, limitX),
-                Mathf.Clamp(playerRigidBody.position.y + (moveY * playerMoveSpeedY), -bottomLimitY, upperLimitY),
-                0);
+            /*
+                        //プレイヤーが次に動く座標を設定
+                        playerPosition = new Vector3(
+                            //座標の計算。Clampを使用して次の位置をlimit内に収める。
+                            Mathf.Clamp(playerRigidBody.position.x + (moveX * playerMoveSpeedX), -limitX, limitX),
+                            Mathf.Clamp(playerRigidBody.position.y + (moveY * playerMoveSpeedY), -bottomLimitY, upperLimitY),
+                            0);
 
-            //次に動く座標をプレイヤーの位置に適用
-            playerRigidBody.position = playerPosition;
-            */
+                        //次に動く座標をプレイヤーの位置に適用
+                        playerRigidBody.position = playerPosition;
+                        */
         }
     }
 
@@ -270,7 +306,7 @@ public class PlayerController : MonoBehaviour {
         {
             //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
 
-            if (reloadTimer >= bulletFireRate && magazineGage >= magagineConsumption)
+            if (reloadTimer >= bulletFireRate && magazineGage >= magazineConsumption)
             {
 
                 if (weaponState == WeaponState.doubleMachineGun)
@@ -278,7 +314,7 @@ public class PlayerController : MonoBehaviour {
                     //リロードタイマーを0にする
                     reloadTimer = 0.0f;
 
-                    magazineGage -= magagineConsumption; 
+                    magazineGage -= magazineConsumption; 
 
                     MuzzleTransform = Muzzle.transform;
 
@@ -348,42 +384,90 @@ public class PlayerController : MonoBehaviour {
 
                 if (!playerAnimator.IsInTransition(0))
                 {
-                    //移動後のXの値が許容範囲を超える際
-                    if (Mathf.Abs(playerRigidBody.transform.position.x) + Mathf.Abs(rollDistance) >= limitX){
+                    //移動後のXの値が許容範囲を超えない際
+                    if ((playerRigidBody.transform.position.x + rollDistance) <= limitX && playerRigidBody.transform.position.x + negativeRollDistance >= negativeLimitX){
 
                         switch (currentRollDirection)
                         {
                             case 1:
                                 Debug.Log("左にステップ");
-                                finallyRollDistance = -limitX - playerRigidBody.transform.position.x;
+                                //移動可能範囲を超えないのでそのまま代入
+                                finallyRollDistance = negativeRollDistance;
                                 Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoLeft", true);
+                                //リスト内に格納されたオブジェクトそれぞれにパーティクル動作開始メソッドを実行
+                                foreach (GameObject particleStarterChildren in particleStarterR_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
                                 break;
                             case 2:
                                 Debug.Log("右にステップ");
-                                //右ステップ
-                                finallyRollDistance = limitX - playerRigidBody.transform.position.x;
+                                //移動可能範囲を超えないのでそのまま代入
+                                finallyRollDistance = rollDistance;
                                 Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoRight", true);
+                                foreach (GameObject particleStarterChildren in particleStarterL_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
                                 break;
                         }
                     }
-                    else
+                    //右方向に緊急回避の距離が超過する場合
+                    if(playerRigidBody.transform.position.x > 0 && playerRigidBody.transform.position.x + rollDistance > limitX)
                     {
                         switch (currentRollDirection)
                         {
                             case 1:
                                 Debug.Log("左にステップ");
-                                finallyRollDistance = -Mathf.Abs(rollDistance);
+                                finallyRollDistance = negativeRollDistance;
                                 Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoLeft", true);
+                                foreach (GameObject particleStarterChildren in particleStarterR_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
+                                break;
+                            case 2:
+                                Debug.Log("右に超過");
+                                //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
+                                finallyRollDistance = Mathf.Clamp(limitX - playerRigidBody.transform.position.x, 0, limitX);
+                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                playerAnimator.SetBool("rolltoRight", true);
+                                foreach (GameObject particleStarterChildren in particleStarterL_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
+                                break;
+                        }
+                    }
+
+                    //左方向に緊急回避の距離が超過する場合
+                    if (playerRigidBody.transform.position.x < 0 && playerRigidBody.transform.position.x + negativeRollDistance < negativeLimitX)
+                    {
+                        switch (currentRollDirection)
+                        {
+                            case 1:
+                                Debug.Log("左に超過");
+                                finallyRollDistance = Mathf.Clamp(negativeLimitX - playerRigidBody.transform.position.x, negativeLimitX , 0);
+                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                playerAnimator.SetBool("rolltoLeft", true);
+                                foreach (GameObject particleStarterChildren in particleStarterR_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
                                 break;
                             case 2:
                                 Debug.Log("右にステップ");
-                                //右ステップ
-                                finallyRollDistance = Mathf.Abs(rollDistance);
+                                //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
+                                finallyRollDistance = rollDistance;
                                 Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoRight", true);
+                                foreach (GameObject particleStarterChildren in particleStarterL_List)
+                                {
+                                    particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
+                                }
                                 break;
                         }
                     }

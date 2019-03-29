@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 
         playerObject = GameObject.Find("Player");
         gameAreaObject = GameObject.Find("GameArea");
-        mainPPSvolume = playerObject.GetComponent<PostProcessVolume>();
+        mainPPSvolume = gameAreaObject.GetComponent<PostProcessVolume>();
 
         initCameraPosition = new Vector3(0, 7, -20);
 
