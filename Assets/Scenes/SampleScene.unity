@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.23236752, g: 0.23554039, b: 0.2723026, a: 1}
+  m_IndirectSpecularColor: {r: 0.23225456, g: 0.23542684, b: 0.27215555, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4392,37 +4392,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 114534983511682970, guid: c21b31ffa2a66c340bce2eb803c0102e,
-        type: 2}
-      propertyPath: weapon01Cunsumption
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 65540124975171598, guid: c21b31ffa2a66c340bce2eb803c0102e,
-        type: 2}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1629382739133700, guid: c21b31ffa2a66c340bce2eb803c0102e, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400950740805894, guid: c21b31ffa2a66c340bce2eb803c0102e, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1858844156387048, guid: c21b31ffa2a66c340bce2eb803c0102e, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1648943270873152, guid: c21b31ffa2a66c340bce2eb803c0102e, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 137874100558015736, guid: c21b31ffa2a66c340bce2eb803c0102e,
-        type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 75a3520641540c74b8d066e5af0f5ef3, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c21b31ffa2a66c340bce2eb803c0102e, type: 2}
   m_IsPrefabAsset: 0

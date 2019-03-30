@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "WeaponData/Create")]
 public class Weapondata : ScriptableObject {
 
     public List<WeaponStatus> weaponStatusList = new List<WeaponStatus>();
@@ -13,8 +14,14 @@ public class WeaponStatus
     //武器の名称
     public string weaponName;
 
+    //弾丸の発射点の個数
+    public int numOfMuzzles;
+
     //武器設定に含まれるデータ 
-    [SerializeField]public List<GameObject> ListofMuzzleObject;
+    [SerializeField]public List<string> ListofMuzzleObjectName;
+
+    //同時発射する弾丸の個数
+    public int numOfBulletsPerMuzzle;
 
     //武器のモーション
     public string idleMotionFlag;

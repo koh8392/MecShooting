@@ -59,13 +59,13 @@ public class PlayerController : MonoBehaviour {
     public bool isAutoShot;                        //オートで射撃を行うか
     private WeaponState weaponState;               //武器の種類
     private SubWeaponState subWeaponState;         //サブウェポンの種類
-    private GameObject doubleMG_L;                 //ダブルマシンガンのオブジェクト(左)
-    private GameObject doubleMG_R;                 //ダブルマシンガンのオブジェクト(右)
-    private Transform doubleMG_L_transform;        //ダブルマシンガンのトランスフォーム(右)
-    private Transform doubleMG_R_transform;        //ダブルマシンガンのトランスフォーム(左)
-    private Vector3 doubleMGL_bulletPos;
-    private Vector3 doubleMGR_bulletPos;
-    private int bulletConsumption;              //武器１のマガジン消費量 
+    private GameObject muzzleObject_L;                 //ダブルマシンガンのオブジェクト(左)
+    private GameObject muzzleObject_R;                 //ダブルマシンガンのオブジェクト(右)
+    private Transform muzzleObject_L_transform;        //ダブルマシンガンのトランスフォーム(右)
+    private Transform muzzleObject_R_transform;        //ダブルマシンガンのトランスフォーム(左)
+    private Vector3 muzzleObjectL_bulletPos;
+    private Vector3 muzzleObjectR_bulletPos;
+    private int bulletConsumption;                 //1発当たりのマガジン消費量 
 
     public float magazineGage;                     //弾倉の残量
     private float magazineConsumption;             //弾倉の発射時の消費量
@@ -96,6 +96,14 @@ public class PlayerController : MonoBehaviour {
         negativeLimitX = -limitX;
         negativeRollDistance = -rollDistance;
         /*プレイヤー移動に関する初期処理ここまで*/
+
+        //武器データのScriptableObject全体を読み込み
+        Weapondata weaponData = Resources.Load<Weapondata>("Data/MainWeapondata");
+
+        WeaponStatus weaponStatus = weaponData.weaponStatusList[0];
+
+        Debug.Log(weaponStatus.weaponName);
+
 
         /*アニメーションに関する処理*/
         playerAnimator = playerModel.GetComponent<Animator>();
@@ -145,13 +153,13 @@ public class PlayerController : MonoBehaviour {
         magazineGage = 0.0f;
 
         //ダブルショット時の武器のオブジェクトの取得
-        doubleMG_L = transform.Find("mechmodel/L_CarbinRifle").gameObject;
+        MuzzleObject_L = transform.Find("mechmodel/L_CarbinRifle").gameObject;
         doubleMG_L_transform = doubleMG_L.GetComponent<Transform>();
         doubleMG_R = transform.Find("mechmodel/R_CarbinRifle").gameObject;
         doubleMG_R_transform = doubleMG_R.GetComponent<Transform>();
 
         //呼び出された武器に応じて武器のエネルギー使用量を決定
-        magazineConsumption = bulletConsumption;
+        magazineConsumption = weaponStatus.bulletConsumption;
     }
 
     // Update is called once per frame
@@ -302,34 +310,7 @@ public class PlayerController : MonoBehaviour {
 
                 if (weaponState == WeaponState.doubleMachineGun)
                 {
-                    //リロードタイマーを0にする
-                    reloadTimer = 0.0f;
-
-                    magazineGage -= magazineConsumption; 
-
-                    MuzzleTransform = Muzzle.transform;
-
-                    //左の銃弾の生成
-                    doubleMGL_bulletPos = new Vector3(doubleMG_L_transform.position.x + 2.5f,
-                                                      doubleMG_L_transform.position.y,
-                                                      doubleMG_L_transform.position.z + 2.0f);
-                    bullet01 = Instantiate(bulletPrefab, doubleMGL_bulletPos, MuzzleTransform.rotation) as GameObject;
-
-                    //右の銃弾の生成
-                    doubleMGR_bulletPos = new Vector3(doubleMG_R_transform.position.x - 2.5f,
-                                                      doubleMG_R_transform.position.y,
-                                                      doubleMG_R_transform.position.z + 2.0f);
-                    bullet02 = Instantiate(bulletPrefab, doubleMGR_bulletPos, MuzzleTransform.rotation) as GameObject;
-
-                    //銃弾に発射処理を行う。
-                    shootForce = Muzzle.transform.forward * bulletSpeed;
-                    bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
-
-                    //銃弾に発射処理を行う。
-                    shootForce = Muzzle.transform.forward * bulletSpeed;
-                    bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
-
-                    playerAnimator.SetBool("Doubleshot_shot", true);
+                    shotDMG();
                 }
 
             }
@@ -337,6 +318,43 @@ public class PlayerController : MonoBehaviour {
         }
 
     }
+
+
+    //ダブルマシンガンの攻撃処理
+    private void shotDMG()
+    {
+        //リロードタイマーを0にする
+        reloadTimer = 0.0f;
+
+        magazineGage -= magazineConsumption;
+
+        MuzzleTransform = Muzzle.transform;
+
+        //左の銃弾の生成
+        doubleMGL_bulletPos = new Vector3(doubleMG_L_transform.position.x + 2.5f,
+                                          doubleMG_L_transform.position.y,
+                                          doubleMG_L_transform.position.z + 2.0f);
+        bullet01 = Instantiate(bulletPrefab, doubleMGL_bulletPos, MuzzleTransform.rotation) as GameObject;
+
+        //右の銃弾の生成
+        doubleMGR_bulletPos = new Vector3(doubleMG_R_transform.position.x - 2.5f,
+                                          doubleMG_R_transform.position.y,
+                                          doubleMG_R_transform.position.z + 2.0f);
+        bullet02 = Instantiate(bulletPrefab, doubleMGR_bulletPos, MuzzleTransform.rotation) as GameObject;
+
+        //銃弾に発射処理を行う。
+        shootForce = Muzzle.transform.forward * bulletSpeed;
+        bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
+
+        //銃弾に発射処理を行う。
+        shootForce = Muzzle.transform.forward * bulletSpeed;
+        bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
+
+        playerAnimator.SetBool("Doubleshot_shot", true);
+
+    }
+
+
 
     //リロード時間計算のためのタイマー
     void Timer()
