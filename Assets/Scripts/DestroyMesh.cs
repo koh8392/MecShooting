@@ -56,7 +56,7 @@ public class DestroyMesh : MonoBehaviour {
             r.transform.SetParent(null);
 
             //既に自作している自動でn秒後にオブジェクトを廃棄するスクリプトを添付し２秒に設定。
-            //r.gameObject.AddComponent<AutoDestroy>().time = 2f;
+            r.gameObject.AddComponent<AutoDestroy>().StartDestroyThis(3.0f);
 
             //破壊時にそれぞれの破片が飛ばされる方向をvector3で生成。
             var collapseDirection = new Vector3(random.Next(min, max), random.Next(min, max), random.Next(-8, 0));

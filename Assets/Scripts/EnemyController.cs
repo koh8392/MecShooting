@@ -24,9 +24,9 @@ public class EnemyController : MonoBehaviour {
         enemyMoveSpeedX = enemyMoveSpeedX / 10;
         enemyMoveSpeedY = enemyMoveSpeedY / 10;
         enemyMoveSpeedZ = enemyMoveSpeedZ / 10;
-        enemyMaxHP = enemyCurrentHP;
+        enemyCurrentHP = enemyMaxHP;
         isEnemyAlive = true;
-        waitTime = 4.0f;
+        waitTime = 2.0f;
     }
 	
 	// Update is called once per frame
@@ -61,6 +61,10 @@ public class EnemyController : MonoBehaviour {
             isEnemyAlive = false;
             //敵の当たり判定を衝突判定に変更
             gameObject.GetComponent<BoxCollider>().isTrigger = false;
+            //破壊時のエフェクトを再生
+            GameObject DestructionParticleStarter = transform.Find("EnemyDestructionParticleParent").gameObject;
+            DestructionParticleStarter.GetComponent<ParticleStarter>().StartParticle();
+            
             //一定時間経過後にオブジェクト自体を削除
             StartCoroutine("Wait");
         }
@@ -75,6 +79,7 @@ public class EnemyController : MonoBehaviour {
             Destroy(other.gameObject);
             bulletPower = other.gameObject.GetComponent<BulletController>().bulletPower;
             enemyCurrentHP = enemyCurrentHP - bulletPower;
+            Debug.Log("敵のHPは" + enemyCurrentHP);
         }
     }
 

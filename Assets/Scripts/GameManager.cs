@@ -53,14 +53,14 @@ public class GameManager : MonoBehaviour {
         gameAreaObject = GameObject.Find("GameArea");
         mainPPSvolume = gameAreaObject.GetComponent<PostProcessVolume>();
 
-        initCameraPosition = new Vector3(0, 7, -20);
+        initCameraPosition = new Vector3(0, 14, -20);
 
         /*ポストエフェクト関連の処理*/
 
-        //chromaticAbberrationのインスタンスをScriptableObjectで作成
+        //chromaticAbberrationのインスタンスを設定ごとScriptableObjectで作成
         chromaticAberration = ScriptableObject.CreateInstance<ChromaticAberration>();
         
-        //PPSのchromaticAbberrationインスタンスを生成した際の初期化処理。ここに初期状態を記述しておく。
+        //PPSのchromaticAbberrationインスタンスを上書きして設定を変更。
         //chromaticAbberrationの有効/無効の値にtrueをoverrideして有効にする
         chromaticAberration.enabled.Override(true);
         //chromaticAbberrationのintensityの値に1をoverrideして有効にする
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
 
         /*ポストエフェクト関連の処理ここまで*/
 
-        gameAreaObject.transform.DOMove(new Vector3(0.0f, 0.0f, 0.0f), boostTime);
+        gameAreaObject.transform.DOMove(new Vector3(0.0f, gameAreaObject.transform.position.y, 0.0f), boostTime);
 
         //ブースターのパージ関連の初期化処理
         purgeUI = GameObject.Find("PurgeUI");

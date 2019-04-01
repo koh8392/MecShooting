@@ -46,7 +46,7 @@ public class WingmateController : MonoBehaviour {
         {
 
             //既に自作している自動でn秒後にオブジェクトを廃棄するスクリプトを添付しn秒に設定。
-            r.gameObject.AddComponent<AutoDestroy>().StartDestroyThis(5.0f);
+            r.gameObject.AddComponent<AutoDestroy>().StartDestroyThis(3.0f);
 
             //破壊時にそれぞれの破片が飛ばされる方向をvector3で生成。
         });

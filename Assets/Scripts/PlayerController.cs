@@ -123,12 +123,6 @@ public class PlayerController : MonoBehaviour {
         //ロール時に使用するパーティクルを取得
         //thrusterParticleStarter_R = GameObject.Find("thrusterEffectR").GetComponent<ParticleStarter>();
 
-        //リスト内に格納されたオブジェクトそれぞれにパーティクル動作開始メソッドを実行
-        foreach(GameObject particleStarterChildren in particleStarterL_List)
-        {
-            particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
-        }
-
         /*アニメーションに関する処理ここまで*/
 
         //射撃に関する初期処理

@@ -3215,13 +3215,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1397717467494260}
-  m_LocalRotation: {x: 0.060610756, y: -0, z: -0, w: 0.99816155}
+  m_LocalRotation: {x: 0.1670832, y: -0, z: -0, w: 0.98594284}
   m_LocalPosition: {x: 0, y: 5.53, z: -9.779999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4497125348428104}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 6.9500003, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 19.237001, y: 0, z: 0}
 --- !u!4 &4318898941833826
 Transform:
   m_ObjectHideFlags: 1
@@ -3542,7 +3542,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1645531159565928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -106.3}
+  m_LocalPosition: {x: 0, y: -1.5, z: -106.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4306357622626654}
@@ -7286,8 +7286,8 @@ MonoBehaviour:
   playerMoveSpeedY: 1
   playerMoveSpeedZ: 0
   limitX: 24
-  bottomLimitY: -6
-  upperLimitY: 10
+  bottomLimitY: 0
+  upperLimitY: 0
   rollRecastTime: 0.2
   rollDistance: 15
   boostGage: 0
