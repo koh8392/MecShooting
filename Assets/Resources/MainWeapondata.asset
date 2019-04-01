@@ -13,18 +13,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponStatusList:
   - weaponName: Double_MG
-    numOfMuzzles: 0
-    ListofMuzzleObjectName:
+    numOfMuzzles: 2
+    listofMuzzleObjectName:
     - L_CarbinRifle
     - R_CarbinRifle
-    numOfBulletsPerMuzzle: 0
+    muzzleOffset: {x: 2.5, y: 0, z: 2}
+    numOfBulletsPerMuzzle: 1
     idleMotionFlag: Doubleshot_shot
     shotMethodName: shotDMG
     bulletPrefabName: DMG_Bullet
     bulletConsumption: 8
   - weaponName: 
     numOfMuzzles: 0
-    ListofMuzzleObjectName: []
+    listofMuzzleObjectName: []
+    muzzleOffset: {x: 0, y: 0, z: 0}
     numOfBulletsPerMuzzle: 0
     idleMotionFlag: 
     shotMethodName: 

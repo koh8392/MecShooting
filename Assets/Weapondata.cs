@@ -17,8 +17,11 @@ public class WeaponStatus
     //弾丸の発射点の個数
     public int numOfMuzzles;
 
-    //武器設定に含まれるデータ 
-    [SerializeField]public List<string> ListofMuzzleObjectName;
+    //発射点として設定するオブジェクトの名称
+    [SerializeField]public List<string> listofMuzzleObjectName;
+
+    //発射点のオブジェクトからのオフセット
+    public Vector3 muzzleOffset;
 
     //同時発射する弾丸の個数
     public int numOfBulletsPerMuzzle;

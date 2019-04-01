@@ -52,24 +52,27 @@ public class PlayerController : MonoBehaviour {
     private GameObject bullet01;                   //生成する弾丸
     private GameObject bullet02;　　　　　　　　　 //ダブルショットの場合2発目の弾丸
     private GameObject bulletPrefab;               //弾丸のプレファブ
-    private GameObject Muzzle;                     //銃口のゲームオブジェクト
-    private Transform  MuzzleTransform;            //銃口のTransform
+    private GameObject muzzle;
+    private Transform  muzzleTransform;            //銃口のTransform
     private Vector3 shootForce;                    //射撃する際に加える力
     private float reloadTimer;                     //リロード用のタイマー
     public bool isAutoShot;                        //オートで射撃を行うか
     private WeaponState weaponState;               //武器の種類
     private SubWeaponState subWeaponState;         //サブウェポンの種類
-    private GameObject muzzleObject_L;                 //ダブルマシンガンのオブジェクト(左)
-    private GameObject muzzleObject_R;                 //ダブルマシンガンのオブジェクト(右)
-    private Transform muzzleObject_L_transform;        //ダブルマシンガンのトランスフォーム(右)
-    private Transform muzzleObject_R_transform;        //ダブルマシンガンのトランスフォーム(左)
-    private Vector3 muzzleObjectL_bulletPos;
-    private Vector3 muzzleObjectR_bulletPos;
+    private GameObject muzzleObject_L;             //発射点のオブジェクト(左)
+    private GameObject muzzleObject_R;             //発射点のオブジェクト(右)
+    private Transform muzzleObject_L_transform;    //発射点オブジェクトのトランスフォーム(右)
+    private Transform muzzleObject_R_transform;    //発射点オブジェクトトランスフォーム(左)
+    private Vector3 muzzleObjectL_bulletPos;       //弾丸の生成位置
+    private Vector3 muzzleObjectR_bulletPos;       //弾丸の生成位置
     private int bulletConsumption;                 //1発当たりのマガジン消費量 
 
     public float magazineGage;                     //弾倉の残量
     private float magazineConsumption;             //弾倉の発射時の消費量
 
+    //データから代入する武器情報の格納先
+    private Weapondata weaponData;
+    private WeaponStatus weaponStatus;
 
     //弾丸の情報
     //private float bulletPower;                       //弾丸の威力
@@ -91,28 +94,24 @@ public class PlayerController : MonoBehaviour {
 
         rollRecastTimer = rollRecastTime;
 
-   　　 playerModel = GameObject.Find("mechmodel");
+   　　
 
         negativeLimitX = -limitX;
         negativeRollDistance = -rollDistance;
         /*プレイヤー移動に関する初期処理ここまで*/
 
         //武器データのScriptableObject全体を読み込み
-        Weapondata weaponData = Resources.Load<Weapondata>("Data/MainWeapondata");
+        weaponData = Resources.Load<Weapondata>("MainWeapondata");
 
-        WeaponStatus weaponStatus = weaponData.weaponStatusList[0];
+        weaponStatus = weaponData.weaponStatusList[0];
 
-        Debug.Log(weaponStatus.weaponName);
+        Debug.Log("選択中の武器は" + weaponStatus.weaponName);
 
 
         /*アニメーションに関する処理*/
+        playerModel = GameObject.Find("mechmodel");
         playerAnimator = playerModel.GetComponent<Animator>();
 
-        //アニメーターのフラグを初期化
-        playerAnimator.SetBool("rolltoLeft", false);
-        playerAnimator.SetBool("rolltoRight", false);
-        playerAnimator.SetBool("Doubleshot_shot", false);
-        
         //緊急回避の初期方向を設定 
         currentRollDirection = 0;
 
@@ -136,30 +135,51 @@ public class PlayerController : MonoBehaviour {
         //武器の種類を設定
         weaponState = WeaponState.doubleMachineGun;
 
-        //弾丸のプレハブをロード
-        bulletPrefab = (GameObject)Resources.Load("Prefabs/Bullet");
+        //弾丸のプレハブをロードする処理
+        
+        //weaponDataから読み込む弾丸のパスを文字列で生成
+        string currentBulletName = "Prefabs/" + weaponStatus.bulletPrefabName;
+
+        //弾丸のプレハブを読み込み
+        bulletPrefab = (GameObject)Resources.Load(currentBulletName);
 
         //弾丸のパラメータを事前取得
         bulletFireRate = bulletPrefab.GetComponent<BulletController>().bulletFireRate;
-        //射撃レートを秒数に変換(レート/60秒/FixedUpdate50FPS)
-        bulletFireRate = bulletFireRate / 3000;
+        //射撃レートを秒数に変換(レート/60秒/FixedUpdate60FPS)
+        bulletFireRate = bulletFireRate / 3600;
         bulletSpeed = bulletPrefab.GetComponent<BulletController>().bulletSpeed;
-        //マズルを取得
-        Muzzle = GameObject.Find("PlayerMuzzle");
         reloadTimer = bulletFireRate;
+
+        
 
         //ブーストゲージと弾倉ゲージの初期値を設定
         boostGage = 0.0f;
         magazineGage = 0.0f;
 
+
+
         //ダブルショット時の武器のオブジェクトの取得
-        MuzzleObject_L = transform.Find("mechmodel/L_CarbinRifle").gameObject;
-        doubleMG_L_transform = doubleMG_L.GetComponent<Transform>();
-        doubleMG_R = transform.Find("mechmodel/R_CarbinRifle").gameObject;
-        doubleMG_R_transform = doubleMG_R.GetComponent<Transform>();
+
+        //射出点のオブジェクトのモデルを取得
+        string muzzleObjectName_L = "mechmodel/" + weaponStatus.listofMuzzleObjectName[0];
+        muzzleObject_L = transform.Find(muzzleObjectName_L).gameObject;
+
+        //射出点のオブジェクトのトランスフォームを取得
+        muzzleObject_L_transform = muzzleObject_L.GetComponent<Transform>();
+
+        //以下同様
+        string muzzleObjectName_R = "mechmodel/" + weaponStatus.listofMuzzleObjectName[1];
+        muzzleObject_R = transform.Find(muzzleObjectName_R).gameObject;
+        muzzleObject_R_transform = muzzleObject_R.GetComponent<Transform>();
+
+        //全体の射撃方向を管理するオブジェクトを取得
+        muzzle = transform.Find("PlayerMuzzle").gameObject;
+        muzzleTransform = muzzle.GetComponent<Transform>();
 
         //呼び出された武器に応じて武器のエネルギー使用量を決定
         magazineConsumption = weaponStatus.bulletConsumption;
+
+
     }
 
     // Update is called once per frame
@@ -202,7 +222,7 @@ public class PlayerController : MonoBehaviour {
                 break;
 
                 case GameState.boosted:
-                        break;
+                break;
 
             }
 
@@ -265,19 +285,19 @@ public class PlayerController : MonoBehaviour {
                 //現在アニメーション移行中の場合は実行じない。(遷移中に次のモーションが予約され意図しない動作を行ってしまうため。)
                     && !playerAnimator.IsInTransition(0))
                 {
-                    playerAnimator.SetBool("move_left02", true);
+                    playerAnimator.SetBool("move_left", true);
                     //transform.rotation = Quaternion.Euler(0, 0, 15);
                 }
                 if (-0.1 < moveX && moveX <= 0.1)
                 {
-                    playerAnimator.SetBool("move_left02", false);
-                    playerAnimator.SetBool("move_right02", false);
+                    playerAnimator.SetBool("move_left", false);
+                    playerAnimator.SetBool("move_right", false);
                     //transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
                 if (0.1 <= moveX && moveX <= 1
                     && !playerAnimator.IsInTransition(0))
                 {
-                    playerAnimator.SetBool("move_right02", true);
+                    playerAnimator.SetBool("move_right", true);
                     //transform.rotation = Quaternion.Euler(0, 0, -15);
                 }
 
@@ -328,26 +348,31 @@ public class PlayerController : MonoBehaviour {
 
         magazineGage -= magazineConsumption;
 
-        MuzzleTransform = Muzzle.transform;
-
         //左の銃弾の生成
-        doubleMGL_bulletPos = new Vector3(doubleMG_L_transform.position.x + 2.5f,
-                                          doubleMG_L_transform.position.y,
-                                          doubleMG_L_transform.position.z + 2.0f);
-        bullet01 = Instantiate(bulletPrefab, doubleMGL_bulletPos, MuzzleTransform.rotation) as GameObject;
+        
+        //射出点の位置をvector3で生成
+        muzzleObjectL_bulletPos = new Vector3(muzzleObject_L_transform.position.x + weaponStatus.muzzleOffset.x,
+                                              muzzleObject_L_transform.position.y + weaponStatus.muzzleOffset.y,
+                                              muzzleObject_L_transform.position.z + weaponStatus.muzzleOffset.z);
+
+        bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
+
+        Debug.Log("ここまで実行");
 
         //右の銃弾の生成
-        doubleMGR_bulletPos = new Vector3(doubleMG_R_transform.position.x - 2.5f,
-                                          doubleMG_R_transform.position.y,
-                                          doubleMG_R_transform.position.z + 2.0f);
-        bullet02 = Instantiate(bulletPrefab, doubleMGR_bulletPos, MuzzleTransform.rotation) as GameObject;
+        muzzleObjectR_bulletPos = new Vector3(muzzleObject_R_transform.position.x - weaponStatus.muzzleOffset.x,
+                                              muzzleObject_R_transform.position.y + weaponStatus.muzzleOffset.y,
+                                              muzzleObject_R_transform.position.z + weaponStatus.muzzleOffset.z);
+        bullet02 = Instantiate(bulletPrefab, muzzleObjectR_bulletPos, muzzleTransform.rotation) as GameObject;
+
+
 
         //銃弾に発射処理を行う。
-        shootForce = Muzzle.transform.forward * bulletSpeed;
+        shootForce = muzzle.transform.forward * bulletSpeed;
         bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
 
         //銃弾に発射処理を行う。
-        shootForce = Muzzle.transform.forward * bulletSpeed;
+        shootForce = muzzle.transform.forward * bulletSpeed;
         bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
 
         playerAnimator.SetBool("Doubleshot_shot", true);
