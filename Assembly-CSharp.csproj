@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AssetResouces\Starfield Skybox\Demo\Script\LookCamera.cs" />
-    <Compile Include="Assets\CameraController.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
@@ -70,44 +69,46 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
-    <Compile Include="Assets\Enemydata.cs" />
-    <Compile Include="Assets\GameAreaController.cs" />
-    <Compile Include="Assets\meshFadeout.cs" />
-    <Compile Include="Assets\ParticleStarter.cs" />
     <Compile Include="Assets\Scripts\AutoDestroy.cs" />
     <Compile Include="Assets\Scripts\BeamController.cs" />
     <Compile Include="Assets\Scripts\BeamManager.cs" />
     <Compile Include="Assets\Scripts\BulletController.cs" />
+    <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\DestroyMesh.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
+    <Compile Include="Assets\Scripts\Enemydata.cs" />
+    <Compile Include="Assets\Scripts\EnemySpawner.cs" />
+    <Compile Include="Assets\Scripts\GameAreaController.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\GameParameter.cs" />
     <Compile Include="Assets\Scripts\MapAssetController.cs" />
     <Compile Include="Assets\Scripts\MapObjectController.cs" />
+    <Compile Include="Assets\Scripts\meshFadeout.cs" />
+    <Compile Include="Assets\Scripts\ParticleStarter.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\PlayUITag.cs" />
     <Compile Include="Assets\Scripts\UIcontroller.cs" />
+    <Compile Include="Assets\Scripts\WarpOut.cs" />
+    <Compile Include="Assets\Scripts\Weapondata.cs" />
     <Compile Include="Assets\Scripts\WingmateController.cs" />
-    <Compile Include="Assets\WarpOut.cs" />
-    <Compile Include="Assets\Weapondata.cs" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -308,7 +309,7 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.20f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
-      <HintPath>C:/Users/beatg/Desktop/作業フォルダ/TankShooting/MecShooting/Assets/Demigiant/DOTween/DOTween.dll</HintPath>
+      <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Assets/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/beatg/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>

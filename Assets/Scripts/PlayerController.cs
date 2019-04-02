@@ -351,7 +351,7 @@ public class PlayerController : MonoBehaviour {
 
         bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
 
-        Debug.Log("ここまで実行");
+        
 
         //右の銃弾の生成
         muzzleObjectR_bulletPos = new Vector3(muzzleObject_R_transform.position.x - weaponStatus.muzzleOffset.x,

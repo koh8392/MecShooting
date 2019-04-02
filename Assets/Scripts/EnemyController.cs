@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class EnemyController : MonoBehaviour {
 
@@ -8,25 +9,41 @@ public class EnemyController : MonoBehaviour {
     private Rigidbody enemyRigidBody;                  //敵の当たり判定
 
     //敵の移動速度
-    [SerializeField] private float enemyMoveSpeedX;   
+    [SerializeField] private float enemyMoveSpeedX;
     [SerializeField] private float enemyMoveSpeedY;
     [SerializeField] private float enemyMoveSpeedZ;
 
-    [SerializeField]private float enemyMaxHP;          //敵の最大HP
+    [SerializeField] private float enemyMaxHP;          //敵の最大HP
     private float enemyCurrentHP;                      //敵の現在のHP 
     private float bulletPower;                         //弾丸の威力(bulletからの取得用)
     private bool isEnemyAlive;                         //敵が生存中かどうか
     private float waitTime;                            //敵の破壊処理開始からデスポーンまでの時間
 
+    [SerializeField]public Vector3 enemySpawnPosition; //敵の生成位置
+    [SerializeField]public Vector3 enemySpawnOffset;   //敵の移動元の位置
+
     // Use this for initialization
-    void Start () {
+    void Awake () {
         enemyRigidBody = GetComponent<Rigidbody>();
         enemyMoveSpeedX = enemyMoveSpeedX / 10;
         enemyMoveSpeedY = enemyMoveSpeedY / 10;
         enemyMoveSpeedZ = enemyMoveSpeedZ / 10;
         enemyCurrentHP = enemyMaxHP;
+
+        
         isEnemyAlive = true;
         waitTime = 2.0f;
+        
+        //敵の登場処理
+        
+        //offset(登場開始位置)移動
+        GetComponent<Transform>().position = enemySpawnOffset;
+
+        //登場開始位置から初期位置に向けて移動
+        Sequence sequence = DOTween.Sequence().OnStart(() =>
+        { 
+            transform.DOLocalMove(enemySpawnPosition, 3.0f).SetEase(Ease.OutQuad);
+        });
     }
 	
 	// Update is called once per frame

@@ -187,6 +187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4733400150021006}
+  - component: {fileID: 114150601636906556}
   m_Layer: 0
   m_Name: Enemyship
   m_TagString: Untagged
@@ -2785,3 +2786,14 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1005512525000204}
   m_Mesh: {fileID: 4300130, guid: d7b0c913cd259ae4291e16b278da5f9b, type: 3}
+--- !u!114 &114150601636906556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1171139833711074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc1eadef489f4a4dbed577256c5658f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
