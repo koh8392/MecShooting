@@ -4,14 +4,15 @@ using UnityEngine;
 using System.Linq;
 using DG.Tweening;
 
-public class DestroyMesh : MonoBehaviour {
-    //private Rigidbody[] partsRigidbodyArray;
 
-    //Vector3 boostPosition;
+public class PurgeBooster : MonoBehaviour {
+
+    [SerializeField] private Vector3 boostPurgeOffset; //ブースター切り離し時にどれだけ後方にスライドさせるか
+
 
     // Use this for initialization
     void Start () {
-        //StartCoroutine("SetCollapse");
+        
 	}
 	
 	// Update is called once per frame
@@ -23,6 +24,7 @@ public class DestroyMesh : MonoBehaviour {
         
         //ブースター自体を切り離し後方に移動開始
         StartCoroutine("SetCollapseCoroutine");
+
     }
 
     public IEnumerator SetCollapseCoroutine() {
@@ -30,7 +32,7 @@ public class DestroyMesh : MonoBehaviour {
         yield return new WaitForSeconds(1.0f);
         Vector3 boostPosition = GetComponent<Transform>().position;
         //ブースター自体を切り離し後方に移動開始
-        gameObject.transform.DOLocalMove(new Vector3(0,boostPosition.y - 3.0f,boostPosition.z - 3.0f), 2.0f).SetEase(Ease.OutCirc);
+        gameObject.transform.DOLocalMove(new Vector3(boostPosition.y - boostPurgeOffset.x, boostPosition.y - boostPurgeOffset.y, boostPosition.z - boostPurgeOffset.z), 2.0f).SetEase(Ease.OutCirc);
         yield return new WaitForSeconds(1.0f);
         CollapseObject();
     }
@@ -63,6 +65,7 @@ public class DestroyMesh : MonoBehaviour {
             r.AddForce(collapseDirection, ForceMode.Impulse);
             r.AddTorque(collapseDirection, ForceMode.Impulse);
         });
+
         Destroy(gameObject);
     }
 }

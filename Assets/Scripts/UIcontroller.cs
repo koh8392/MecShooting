@@ -12,8 +12,7 @@ public class UIcontroller :  MonoBehaviour {
     private GameState currentGameState;
 
     //オートモードに関する変数
-    private bool isAutoModeSelected; //オートモードかどうかのフラグ
-    private bool isSelected; //オートモードの変更処理完了のフラグ
+    private bool isSelecting; //オートモードの変更処理完了のフラグ
 
     //ブーストゲージに関する変数
     private GameObject boostUI; //ブーストゲージUIのオブジェクト
@@ -55,6 +54,17 @@ public class UIcontroller :  MonoBehaviour {
     private RectTransform magazineUItransform;
     private Vector2 defaultMagazineUIposition;
 
+    [SerializeField] [Range(0, 255)] private float gageColorR;
+    [SerializeField] [Range(0, 255)] private float gageColorG;
+    [SerializeField] [Range(0, 255)] private float gageColorB;
+    [SerializeField] [Range(0, 255)] private float gageColorAlpha;
+
+    [SerializeField] [Range(0, 255)] private float gageAlertColorR;
+    [SerializeField] [Range(0, 255)] private float gageAlertColorG;
+    [SerializeField] [Range(0, 255)] private float gageAlertColorB;
+    [SerializeField] [Range(0, 255)] private float gageAlertColorAlpha;
+
+
     //private RectTransform UItransform;
     //private Vector2 defaultUIposition;
 
@@ -75,7 +85,6 @@ public class UIcontroller :  MonoBehaviour {
     // Use this for initialization
     void Start() {
         //
-        isAutoModeSelected　= false;
         player = GameObject.Find("Player");
         playerController = player.GetComponent<PlayerController>();
         currentGameState = GameManager.gameState;
@@ -117,8 +126,6 @@ public class UIcontroller :  MonoBehaviour {
         {
             RectTransform uiPosition = ui.gameObject.GetComponent<RectTransform>();
             Vector2 defaultuiposition = uiPosition.anchoredPosition;
-            //defaultPositionArray.Resize(ref numbers, numbers.Length + 1);
-            //numbers[numbers.Length - 1] = 7;
 
             uiPosition.anchoredPosition = new Vector2(0.0f, 0.0f);
             //配列に獲得したdefaultpositionを格納→スタートのタイミングで呼び出し
@@ -140,7 +147,7 @@ public class UIcontroller :  MonoBehaviour {
         ManageMagazinegage();
         ManageBoostTime();
 
-        inputText.text = playerController.moveX.ToString();
+        inputText.text = playerController.moveX.ToString("f2");
         timeText.text = GameManager.masterTime.ToString("f0");
     }
 
@@ -170,11 +177,11 @@ public class UIcontroller :  MonoBehaviour {
         //一定値以下の場合色を変更
         if (boostGageValue < boostGageAlertValue)
         {
-            boostGageFillImage.color = new Color(222.0f / 255.0f, 18.0f / 255.0f, 18.0f / 255.0f, 120.0f / 255.0f);
+            boostGageFillImage.color = new Color(gageAlertColorR / 255.0f, gageAlertColorG / 255.0f, gageAlertColorB / 255.0f, gageAlertColorAlpha / 255.0f);
         }
         if (boostGageValue > boostGageAlertValue)
         {
-            boostGageFillImage.color = new Color(108.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 120.0f / 255.0f);
+            boostGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
         }
     }
 
@@ -187,16 +194,16 @@ public class UIcontroller :  MonoBehaviour {
         //一定値以下の場合色を変更
         if (magazineGageValue < magazineGageAlertValue)
         {
-            magazineGageFillImage.color = new Color(222.0f / 255.0f, 18.0f / 255.0f, 18.0f / 255.0f, 120.0f / 255.0f);
+            magazineGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
         }
         if (magazineGageValue > magazineGageAlertValue)
         {
-            magazineGageFillImage.color = new Color(108.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 120.0f / 255.0f);
+            magazineGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
         }
     }
 
-
-    public void StartBoostUI()
+    //開始時演出の終了処理開始。
+    public void StartBoostEndUI()
     {
         //マスタータイマーがブースト時間以降かつフラグがオフの場合実行
         if (isPurgeUIStarted == false)
@@ -241,34 +248,32 @@ public class UIcontroller :  MonoBehaviour {
         seq.Join(
         playUI.DOFade(1.0f, 0.7f));
 
-        //seq.Join(
-        //boostUItransform.DOAnchorPos(defaultBoostUIposition, 0.5f));
-
-        //seq.Join(
-        //magazineUItransform.DOAnchorPos(defaultMagazineUIposition, 0.5f));
-
 
     }
 
     //オート射撃モードをオンにする関数
     void AutoShot()
     {
-        //1つのボタンに機能を割り当てるため現在の状態で処理を分岐
-        if (isAutoModeSelected == false && isSelected == false)
+        //1つのボタンにオン/オフ機能を割り当てるため現在の状態で処理を分岐
+
+
+
+        //オートモードが実行中でない場合
+        if (player.GetComponent<PlayerController>().isAutoShot == false && isSelecting == false)
         {
             player.GetComponent<PlayerController>().isAutoShot = true;
-            isAutoModeSelected = true;
-            isSelected = true;
+            isSelecting = true;
         }
 
-        if (isAutoModeSelected == true && isSelected == false)
+
+        //オートモードが実行中の場合
+        if (player.GetComponent<PlayerController>().isAutoShot == true && isSelecting == false)
         {
             player.GetComponent<PlayerController>().isAutoShot = false;
-            isAutoModeSelected = false;
-            isSelected = true;
+            isSelecting = true;
         }
 
-        isSelected = false;
+        isSelecting = false;
     }
 
 }

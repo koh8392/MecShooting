@@ -19,8 +19,9 @@ public class EnemyController : MonoBehaviour {
     private bool isEnemyAlive;                         //敵が生存中かどうか
     private float waitTime;                            //敵の破壊処理開始からデスポーンまでの時間
 
-    [SerializeField]public Vector3 enemySpawnPosition; //敵の生成位置
-    [SerializeField]public Vector3 enemySpawnOffset;   //敵の移動元の位置
+    [SerializeField] public Vector3 enemyMovePosition; //敵の生成位置
+    [SerializeField] public Vector3 enemySpawnOffset;   //敵の移動元の位置
+    private Vector3 gameAreaPosition;
 
     // Use this for initialization
     void Awake () {
@@ -33,16 +34,18 @@ public class EnemyController : MonoBehaviour {
         
         isEnemyAlive = true;
         waitTime = 2.0f;
-        
+
+        gameAreaPosition = GameObject.Find("GameArea").GetComponent<Transform>().position;
+
         //敵の登場処理
-        
+
         //offset(登場開始位置)移動
-        GetComponent<Transform>().position = enemySpawnOffset;
+        //GetComponent<Transform>().position = enemySpawnOffset;
 
         //登場開始位置から初期位置に向けて移動
         Sequence sequence = DOTween.Sequence().OnStart(() =>
         { 
-            transform.DOLocalMove(enemySpawnPosition, 3.0f).SetEase(Ease.OutQuad);
+            transform.DOLocalMove(gameAreaPosition + enemyMovePosition, 3.0f).SetEase(Ease.OutQuad);
         });
     }
 	
@@ -96,7 +99,7 @@ public class EnemyController : MonoBehaviour {
             Destroy(other.gameObject);
             bulletPower = other.gameObject.GetComponent<BulletController>().bulletPower;
             enemyCurrentHP = enemyCurrentHP - bulletPower;
-            Debug.Log("敵のHPは" + enemyCurrentHP);
+            //Debug.Log("敵のHPは" + enemyCurrentHP);
         }
     }
 

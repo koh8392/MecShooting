@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour {
     //アニメーションに関する変数
     private GameObject playerModel;               //プレイヤーの3Dモデル
     private Animator playerAnimator;
-    public bool isAnimationChanged;
+    public bool isStateChanged;
     public float moveMotionTimer;
     [SerializeField] private float moveRecastTime;
     public bool isMoveAnimationChanged;
@@ -57,8 +57,8 @@ public class PlayerController : MonoBehaviour {
     private Vector3 shootForce;                    //射撃する際に加える力
     private float reloadTimer;                     //リロード用のタイマー
     public bool isAutoShot;                        //オートで射撃を行うか
-    private WeaponState weaponState;               //武器の種類
-    private SubWeaponState subWeaponState;         //サブウェポンの種類
+    private WeaponType weaponType;                 //武器の種類
+    private SubWeaponType subWeaponType;           //サブウェポンの種類
     private GameObject muzzleObject_L;             //発射点のオブジェクト(左)
     private GameObject muzzleObject_R;             //発射点のオブジェクト(右)
     private Transform muzzleObject_L_transform;    //発射点オブジェクトのトランスフォーム(右)
@@ -76,9 +76,7 @@ public class PlayerController : MonoBehaviour {
 
     //弾丸の情報
     //private float bulletPower;                       //弾丸の威力
-    //private bulletSpecies currentBullet;             //弾丸の属性
     private float bulletSpeed;                         //弾速
-    //private float bulletDeathTime;                   //弾丸の消失時間
     private float bulletFireRate;                      //リロード間隔
 
     // Use this for initialization
@@ -88,71 +86,50 @@ public class PlayerController : MonoBehaviour {
 
 
         /*プレイヤー移動に関する初期処理*/
+
         //プレイヤーのrigidbodyを取得
         playerRigidBody = GetComponent<Rigidbody>();
-        isRolling = false;
 
-        rollRecastTimer = rollRecastTime;
-
-   　　
-
+        //インスペクターで設定した移動限界の値を逆方向の変数にも代入
         negativeLimitX = -limitX;
-        negativeRollDistance = -rollDistance;
+
         /*プレイヤー移動に関する初期処理ここまで*/
 
-        //武器データのScriptableObject全体を読み込み
-        weaponData = Resources.Load<Weapondata>("MainWeapondata");
-
-        weaponStatus = weaponData.weaponStatusList[0];
-
-        Debug.Log("選択中の武器は" + weaponStatus.weaponName);
 
 
-        /*アニメーションに関する処理*/
-        playerModel = GameObject.Find("mechmodel");
-        playerAnimator = playerModel.GetComponent<Animator>();
+
+        /*プレイヤーの緊急回避に関する初期処理*/
+
+        //緊急回避中のフラグの初期値はオフ
+        isRolling = false;
+
+        //インスペクターで設定した緊急回避距離を逆方向の変数にも代入
+        negativeRollDistance = -rollDistance;
 
         //緊急回避の初期方向を設定 
         currentRollDirection = 0;
 
-        //アニメーション変更中のフラグをオフ
-        isAnimationChanged = false;
-        //移動時のアニメーション変更中のフラグをオフ
-        isMoveAnimationChanged = false;
+        /*プレイヤーの緊急回避に関する初期処理ここまで*/
 
-        //ロール時に使用するパーティクルを取得
-        //thrusterParticleStarter_R = GameObject.Find("thrusterEffectR").GetComponent<ParticleStarter>();
+        /*射撃に関する処理*/
 
-        /*アニメーションに関する処理ここまで*/
+        //全体の射撃方向を管理するオブジェクトを取得
+        muzzle = transform.Find("PlayerMuzzle").gameObject;
+        muzzleTransform = muzzle.GetComponent<Transform>();
 
-        //射撃に関する初期処理
+
+        /*武器データの読み込みに関する変数*/
         //武器の種類を設定
-        weaponState = WeaponState.doubleMachineGun;
+        weaponType = WeaponType.doubleMachineGun;
 
-        //弾丸のプレハブをロードする処理
-        
-        //weaponDataから読み込む弾丸のパスを文字列で生成
-        string currentBulletName = "Prefabs/" + weaponStatus.bulletPrefabName;
+        //武器データのScriptableObject全体を読み込み
+        weaponData = Resources.Load<Weapondata>("MainWeapondata");
 
-        //弾丸のプレハブを読み込み
-        bulletPrefab = (GameObject)Resources.Load(currentBulletName);
+        weaponStatus = weaponData.weaponStatusList[(int)weaponType];
 
-        //弾丸のパラメータを事前取得
-        bulletFireRate = bulletPrefab.GetComponent<BulletController>().bulletFireRate;
-        //射撃レートを秒数に変換(レート/60秒/FixedUpdate60FPS)
-        bulletFireRate = bulletFireRate / 3600;
-        bulletSpeed = bulletPrefab.GetComponent<BulletController>().bulletSpeed;
-        reloadTimer = bulletFireRate;
+        Debug.Log("選択中の武器は" + weaponStatus.weaponName);
 
-        
-
-        //ブーストゲージと弾倉ゲージの初期値を設定
-        boostGage = 0.0f;
-        magazineGage = 0.0f;
-
-
-
-        //ダブルショット時の武器のオブジェクトの取得
+        /*武器設定の読み込み処理*/
 
         //射出点のオブジェクトのモデルを取得
         string muzzleObjectName_L = "mechmodel/" + weaponStatus.listofMuzzleObjectName[0];
@@ -166,47 +143,90 @@ public class PlayerController : MonoBehaviour {
         muzzleObject_R = transform.Find(muzzleObjectName_R).gameObject;
         muzzleObject_R_transform = muzzleObject_R.GetComponent<Transform>();
 
-        //全体の射撃方向を管理するオブジェクトを取得
-        muzzle = transform.Find("PlayerMuzzle").gameObject;
-        muzzleTransform = muzzle.GetComponent<Transform>();
-
-        //呼び出された武器に応じて武器のエネルギー使用量を決定
+        //弾倉消費量を取得
         magazineConsumption = weaponStatus.bulletConsumption;
 
+        /*武器設定の読み込み処理ここまで*/
+
+
+
+        /*弾薬の読み込み処理*/
+
+        //弾丸のプレハブをロードする処理
+        //weaponDataから読み込む弾丸のパスを文字列で生成
+        string currentBulletName = "Prefabs/" + weaponStatus.bulletPrefabName;
+
+        //弾丸のプレハブを読み込み
+        bulletPrefab = (GameObject)Resources.Load(currentBulletName);
+
+        //弾丸のパラメータを事前取得
+        bulletFireRate = bulletPrefab.GetComponent<BulletController>().bulletFireRate;
+
+        //射撃レートを秒数に変換(レート/60秒/FixedUpdate60FPS)
+        bulletFireRate = bulletFireRate / 3600;
+        bulletSpeed = bulletPrefab.GetComponent<BulletController>().bulletSpeed;
+        reloadTimer = bulletFireRate;
+
+        /*弾薬の読み込み処理ここまで*/
+
+        /*射撃に関する処理*ここまで/
+
+
+
+        /*アニメーションに関する処理*/
+        playerModel = GameObject.Find("mechmodel");
+        playerAnimator = playerModel.GetComponent<Animator>();
+
+        //アニメーション変更中のフラグをオフ
+        isStateChanged = false;
+        //移動時のアニメーション変更中のフラグをオフ
+        isMoveAnimationChanged = false;
+
+        /*アニメーションに関する処理ここまで*/
+
+
+
+        //ブーストゲージと弾倉ゲージの初期値を設定
+        boostGage = 0.0f;
+        magazineGage = 0.0f;
 
     }
+
+
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(GameManager.gameState == GameState.boosted)
+        //ゲームステートに合わせて実行する処理を変更
+        if (GameManager.gameState == GameState.boosted)
         {
-            StateManager();
+            CheckState();      //ゲームステートの変更確認
         }
 
         if (GameManager.gameState == GameState.play)
         {
-            Roll();
-            PlayerMove();
-            Timer();
-            PlayerShot();
-            StateManager();
-            BoostGageCharger();
+            CheckState();      //ゲームステートの変更確認
+            Timer();             //リキャスト時間の加算
+            ChargeGage();        //時間で回復する数値の管理
+            Roll();              //緊急回避
+            PlayerMove();        //移動
+            PlayerShot();        //射撃
         }
     }
 
     private void LateUpdate()
     {
+        //フレームの最後でプレイヤーの位置がプレイ範囲外に飛んでいたら戻す
         if (GameManager.gameState == GameState.play)
         {
             ModifyPlayerPosition();
         }
     }
 
-    private void StateManager()
+    private void CheckState()
     {
         //保存しているゲームステートとGameManagerのゲームステートが異なる場合。
-        if (GameManager.gameState != currentGameState && isAnimationChanged == false)
+        if (GameManager.gameState != currentGameState && isStateChanged == false)
         {
             //ゲームマネージャーの値に応じて処理を変更
             switch(GameManager.gameState)
@@ -222,22 +242,22 @@ public class PlayerController : MonoBehaviour {
 
             //現在のゲームステイトを保存し、再処理されないようにフラグをオン
             currentGameState = GameManager.gameState;
-            isAnimationChanged = true;
+            isStateChanged = true;
         }
 
         if (GameManager.gameState == currentGameState)
         {
             //ゲームステイトに変化がなければ再処理防止フラグをオフ
-            if (isAnimationChanged == true)
+            if (isStateChanged == true)
             {
-                isAnimationChanged = false;
+                isStateChanged = false;
             }
         }
 
     }
 
     //時間で回復するパラメーターの回復処理
-    private void BoostGageCharger()
+    private void ChargeGage()
     {
         if (GameManager.masterTime >= 8.0f)
         {
@@ -268,46 +288,37 @@ public class PlayerController : MonoBehaviour {
 
         if (isRolling == false){
 
-            //プレイヤーの位置を取得
-            //playerPosition = playerRigidBody.position;
 
             //現在の方向キーの入力の値を取得
             moveX = Input.GetAxis("Horizontal");
             moveY = Input.GetAxis("Vertical");
 
-                if (-1 <= moveX && moveX < -0.1
+            //アニメーションの変更処理
+            if (-1 <= moveX && moveX < -0.1
                 //現在アニメーション移行中の場合は実行じない。(遷移中に次のモーションが予約され意図しない動作を行ってしまうため。)
                     && !playerAnimator.IsInTransition(0))
                 {
                     playerAnimator.SetBool("move_left", true);
                     //transform.rotation = Quaternion.Euler(0, 0, 15);
                 }
-                if (-0.1 < moveX && moveX <= 0.1)
+
+            if (-0.1 < moveX && moveX <= 0.1)
                 {
                     playerAnimator.SetBool("move_left", false);
                     playerAnimator.SetBool("move_right", false);
                     //transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
-                if (0.1 <= moveX && moveX <= 1
+
+            if (0.1 <= moveX && moveX <= 1
                     && !playerAnimator.IsInTransition(0))
                 {
                     playerAnimator.SetBool("move_right", true);
                     //transform.rotation = Quaternion.Euler(0, 0, -15);
                 }
 
+            //実際の移動処理
             gameObject.transform.Translate((moveX * playerMoveSpeedX), (moveY * playerMoveSpeedY),0,Space.Self);
 
-            /*
-                        //プレイヤーが次に動く座標を設定
-                        playerPosition = new Vector3(
-                            //座標の計算。Clampを使用して次の位置をlimit内に収める。
-                            Mathf.Clamp(playerRigidBody.position.x + (moveX * playerMoveSpeedX), -limitX, limitX),
-                            Mathf.Clamp(playerRigidBody.position.y + (moveY * playerMoveSpeedY), -bottomLimitY, upperLimitY),
-                            0);
-
-                        //次に動く座標をプレイヤーの位置に適用
-                        playerRigidBody.position = playerPosition;
-                        */
         }
     }
 
@@ -322,11 +333,15 @@ public class PlayerController : MonoBehaviour {
             if (reloadTimer >= bulletFireRate && magazineGage >= magazineConsumption)
             {
 
-                if (weaponState == WeaponState.doubleMachineGun)
+                if (weaponType == WeaponType.doubleMachineGun)
                 {
                     shotDMG();
                 }
 
+                if (weaponType == WeaponType.longRifle)
+                {
+                    shotLongRifle();
+                }
             }
 
         }
@@ -340,44 +355,53 @@ public class PlayerController : MonoBehaviour {
         //リロードタイマーを0にする
         reloadTimer = 0.0f;
 
+        //射出前に弾倉ゲージを減らす
         magazineGage -= magazineConsumption;
 
         //左の銃弾の生成
-        
-        //射出点の位置をvector3で生成
+
+        //生成位置は射出点のオブジェクトにオフセット分ずらした座標
         muzzleObjectL_bulletPos = new Vector3(muzzleObject_L_transform.position.x + weaponStatus.muzzleOffset.x,
                                               muzzleObject_L_transform.position.y + weaponStatus.muzzleOffset.y,
                                               muzzleObject_L_transform.position.z + weaponStatus.muzzleOffset.z);
-
+        //読み込んでいた弾丸のプレファブを生成
         bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
 
         
 
-        //右の銃弾の生成
+        //右の銃弾の生成処理
+        //生成位置は射出点のオブジェクトにオフセット分ずらした座標
         muzzleObjectR_bulletPos = new Vector3(muzzleObject_R_transform.position.x - weaponStatus.muzzleOffset.x,
                                               muzzleObject_R_transform.position.y + weaponStatus.muzzleOffset.y,
                                               muzzleObject_R_transform.position.z + weaponStatus.muzzleOffset.z);
+        //読み込んでいた弾丸のプレファブを生成
         bullet02 = Instantiate(bulletPrefab, muzzleObjectR_bulletPos, muzzleTransform.rotation) as GameObject;
 
 
 
-        //銃弾に発射処理を行う。
+        //銃弾に力を加えて発射。
         shootForce = muzzle.transform.forward * bulletSpeed;
         bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
 
-        //銃弾に発射処理を行う。
+        //銃弾に力を加えて発射。
         shootForce = muzzle.transform.forward * bulletSpeed;
         bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
 
+        //発射アニメーションを実行
         playerAnimator.SetBool("Doubleshot_shot", true);
 
     }
 
+    private void shotLongRifle()
+    {
+        //未実装
+    }
 
 
-    //リロード時間計算のためのタイマー
+    //各クール計算のためのタイマー
     void Timer()
     {
+        //毎フレームdeltaTimeを加算
         reloadTimer += Time.deltaTime;
         rollRecastTimer += Time.deltaTime;
         moveMotionTimer += Time.deltaTime;
@@ -392,7 +416,7 @@ public class PlayerController : MonoBehaviour {
             //緊急回避がチャージされていれば処理を実行
             if(boostGage >= boostConsumption && isRolling == false)
             {
-                Debug.Log("緊急回避処理を開始");
+               //Debug.Log("緊急回避処理を開始");
 
                 //緊急回避中かのフラグをオンに
                 isRolling = true;
@@ -418,10 +442,10 @@ public class PlayerController : MonoBehaviour {
                         switch (currentRollDirection)
                         {
                             case 1:
-                                Debug.Log("左にステップ");
+                                //Debug.Log("左にステップ");
                                 //移動可能範囲を超えないのでそのまま代入
                                 finallyRollDistance = negativeRollDistance;
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoLeft", true);
                                 //リスト内に格納されたオブジェクトそれぞれにパーティクル動作開始メソッドを実行
                                 foreach (GameObject particleStarterChildren in particleStarterR_List)
@@ -430,10 +454,10 @@ public class PlayerController : MonoBehaviour {
                                 }
                                 break;
                             case 2:
-                                Debug.Log("右にステップ");
+                                //Debug.Log("右にステップ");
                                 //移動可能範囲を超えないのでそのまま代入
                                 finallyRollDistance = rollDistance;
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoRight", true);
                                 foreach (GameObject particleStarterChildren in particleStarterL_List)
                                 {
@@ -448,9 +472,9 @@ public class PlayerController : MonoBehaviour {
                         switch (currentRollDirection)
                         {
                             case 1:
-                                Debug.Log("左にステップ");
+                                //Debug.Log("左にステップ");
                                 finallyRollDistance = negativeRollDistance;
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoLeft", true);
                                 foreach (GameObject particleStarterChildren in particleStarterR_List)
                                 {
@@ -458,10 +482,10 @@ public class PlayerController : MonoBehaviour {
                                 }
                                 break;
                             case 2:
-                                Debug.Log("右に超過");
+                                //Debug.Log("右に超過");
                                 //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
                                 finallyRollDistance = Mathf.Clamp(limitX - playerRigidBody.transform.position.x, 0, limitX);
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoRight", true);
                                 foreach (GameObject particleStarterChildren in particleStarterL_List)
                                 {
@@ -477,9 +501,9 @@ public class PlayerController : MonoBehaviour {
                         switch (currentRollDirection)
                         {
                             case 1:
-                                Debug.Log("左に超過");
+                                //Debug.Log("左に超過");
                                 finallyRollDistance = Mathf.Clamp(negativeLimitX - playerRigidBody.transform.position.x, negativeLimitX , 0);
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoLeft", true);
                                 foreach (GameObject particleStarterChildren in particleStarterR_List)
                                 {
@@ -487,10 +511,10 @@ public class PlayerController : MonoBehaviour {
                                 }
                                 break;
                             case 2:
-                                Debug.Log("右にステップ");
+                                //Debug.Log("右にステップ");
                                 //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
                                 finallyRollDistance = rollDistance;
-                                Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
+                                //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
                                 playerAnimator.SetBool("rolltoRight", true);
                                 foreach (GameObject particleStarterChildren in particleStarterL_List)
                                 {
@@ -505,6 +529,7 @@ public class PlayerController : MonoBehaviour {
                 //Dotweenで緊急回避の移動処理を実行
                 playerRigidBody.transform.DOLocalMoveX(playerRigidBody.transform.position.x + finallyRollDistance, 0.3f).SetEase(Ease.OutCirc);
 
+                //緊急回避の終了処理を予約実行
                 StartCoroutine("RollReset");
             }
 
@@ -512,11 +537,17 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    //緊急回避の終了処理
     private IEnumerator RollReset()
     {
+        float rollWaitTime = 0.1f;
+        
         //緊急回避処理完了後にフラグをオフ
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(rollWaitTime);
+        //緊急回避フラグをオフ
         isRolling = false;
+        
+        //モーションを通常状態に戻す
         switch (currentRollDirection)
         {
             case 1:

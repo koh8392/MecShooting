@@ -13,20 +13,18 @@ namespace GameParameters
     }
 
     //メインウェポンの種類
-    public enum WeaponState
+    public enum WeaponType
     {
-        none = 0,
-        doubleMachineGun,
+        doubleMachineGun = 0,
         longRifle,
 
 
     }
 
     //サブウェポンの種類
-    public enum SubWeaponState
-    {
-        none = 0,
-        missilePod,
+    public enum SubWeaponType
+    { 
+        missilePod = 0,
         rocketLauncher,
         cannon,
         shield,
@@ -37,8 +35,7 @@ namespace GameParameters
     //弾丸の属性
     public enum BulletSpecies
     {
-        none = 0,
-        normal,
+        normal = 0,
         he,
         ap,
         beam,
