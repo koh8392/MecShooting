@@ -466,6 +466,7 @@ ModelImporter:
     7400042: Booster_set
     7400044: Move_Right
     7400046: Move_Left
+    7400048: Title_idle
     9500000: //RootNode
     13700000: Chest24
     13700002: Chest25
