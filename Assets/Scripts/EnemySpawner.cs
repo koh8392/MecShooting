@@ -29,7 +29,7 @@ public class EnemySpawner : MonoBehaviour {
         spawnNumber = 0;
 
         //敵のプレハブを読み込み
-        enemyPrefab = (GameObject)Resources.Load("Prefabs/Enemy");
+        enemyPrefab = (GameObject)Resources.Load("Prefabs/General/Enemy");
 
         //Debug.Log(enemyPrefab.name);
 

@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour {
 
     private Vector3 enemyPosition;                     //敵の位置(移動用)
     private Rigidbody enemyRigidBody;                  //敵の当たり判定
+    private GameManager gameManager;
 
     //敵の移動速度
     [SerializeField] private float enemyMoveSpeedX;
@@ -14,6 +15,7 @@ public class EnemyController : MonoBehaviour {
     [SerializeField] private float enemyMoveSpeedZ;
 
     [SerializeField] private float enemyMaxHP;          //敵の最大HP
+    [SerializeField] private int enemyScore;
     private float enemyCurrentHP;                      //敵の現在のHP 
     private float bulletPower;                         //弾丸の威力(bulletからの取得用)
     private bool isEnemyAlive;                         //敵が生存中かどうか
@@ -31,6 +33,7 @@ public class EnemyController : MonoBehaviour {
         enemyMoveSpeedZ = enemyMoveSpeedZ / 10;
         enemyCurrentHP = enemyMaxHP;
 
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
         isEnemyAlive = true;
         waitTime = 2.0f;
@@ -84,6 +87,8 @@ public class EnemyController : MonoBehaviour {
             //破壊時のエフェクトを再生
             GameObject DestructionParticleStarter = transform.Find("EnemyDestructionParticleParent").gameObject;
             DestructionParticleStarter.GetComponent<ParticleStarter>().StartParticle();
+            //GameManagerにスコアを加算(するメソッドを実行)
+            gameManager.addScore(enemyScore);
             
             //一定時間経過後にオブジェクト自体を削除
             StartCoroutine("Wait");

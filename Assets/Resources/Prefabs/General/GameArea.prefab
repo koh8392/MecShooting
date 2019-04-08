@@ -7292,7 +7292,7 @@ MonoBehaviour:
   rollDistance: 15
   boostGage: 0
   boostConsumption: 20
-  isAnimationChanged: 0
+  isStateChanged: 0
   moveMotionTimer: 0
   moveRecastTime: 0.2
   isMoveAnimationChanged: 0
@@ -7446,6 +7446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdfcd53798d3c6b4b953262d71fb99ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boostPurgeOffset: {x: 0, y: 0, z: 0}
 --- !u!137 &137000070272582366
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

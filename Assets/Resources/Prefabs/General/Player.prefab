@@ -6718,6 +6718,7 @@ MonoBehaviour:
   moveX: 0
   playerMoveSpeedX: 1
   playerMoveSpeedY: 1
+  playerMoveSpeedZ: 0
   limitX: 24
   bottomLimitY: 6
   upperLimitY: 10
@@ -6725,10 +6726,12 @@ MonoBehaviour:
   rollDistance: 20
   boostGage: 0
   boostConsumption: 20
-  isAnimationChanged: 0
+  isStateChanged: 0
   moveMotionTimer: 0
   moveRecastTime: 0.2
   isMoveAnimationChanged: 0
+  particleStarterL_List: []
+  particleStarterR_List: []
   isAutoShot: 0
   magazineGage: 0
 --- !u!114 &114603348850314842
@@ -6817,6 +6820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdfcd53798d3c6b4b953262d71fb99ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boostPurgeOffset: {x: 0, y: 0, z: 0}
 --- !u!137 &137010539830519638
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

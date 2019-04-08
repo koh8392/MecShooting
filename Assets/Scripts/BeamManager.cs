@@ -15,7 +15,7 @@ public class BeamManager : MonoBehaviour {
         beamManagerTransform = GetComponent<Transform>();
 
         //弾丸のプレハブをロード
-        beamBullet = (GameObject)Resources.Load("Prefabs/beam") as GameObject;
+        beamBullet = (GameObject)Resources.Load("Prefabs/General/beam") as GameObject;
 
         GameObject.FindGameObjectsWithTag("Wingmate").ToList().ForEach(wingmates =>
         {

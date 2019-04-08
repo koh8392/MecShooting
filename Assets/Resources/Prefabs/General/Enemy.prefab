@@ -1014,6 +1014,7 @@ MonoBehaviour:
   enemyMoveSpeedY: 0
   enemyMoveSpeedZ: -3
   enemyMaxHP: 30
+  enemyScore: 20
   enemyMovePosition: {x: 5, y: 5, z: 140}
   enemySpawnOffset: {x: -15, y: 15, z: 140}
 --- !u!137 &137086019272049858

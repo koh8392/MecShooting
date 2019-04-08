@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour {
     public static GameState gameState;
     //全体時間管理のタイマー
     public static float masterTime;
+    //全体のスコア
+    public static int score;
 
     /**********ここまで*********/
 
@@ -193,6 +195,12 @@ public class GameManager : MonoBehaviour {
 
 
         }
+
+    }
+
+    public void addScore(int incrementScore)
+    {
+        score = score + incrementScore;
 
     }
 

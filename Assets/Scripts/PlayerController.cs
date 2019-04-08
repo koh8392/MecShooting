@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour {
 
         //弾丸のプレハブをロードする処理
         //weaponDataから読み込む弾丸のパスを文字列で生成
-        string currentBulletName = "Prefabs/" + weaponStatus.bulletPrefabName;
+        string currentBulletName = "Prefabs/General/" + weaponStatus.bulletPrefabName;
 
         //弾丸のプレハブを読み込み
         bulletPrefab = (GameObject)Resources.Load(currentBulletName);
