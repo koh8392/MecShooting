@@ -70,6 +70,9 @@ public class UIcontroller :  MonoBehaviour {
 
     private Text inputText;
     private Text timeText;
+    private Text scoreText;
+    private Slider scoreSlider;
+        
 
     //以下、UIの透明度の初期化ユーティリティ
     [SerializeField] [Range(0, 1)] private float purgeUIdefaultalpha; //
@@ -91,6 +94,11 @@ public class UIcontroller :  MonoBehaviour {
 
         inputText = GameObject.Find("inputUI").GetComponent<Text>();
         timeText = GameObject.Find("timeUI").GetComponent<Text>();
+
+
+        //ブーストゲージのUI、コンポーネントを取得
+        scoreText = GameObject.Find("scoreText").GetComponent<Text>();
+        scoreSlider = GameObject.Find("scoreSlider").GetComponent<Slider>();
 
         //パージUIの取得処理]
         purgeUI = GameObject.Find("PurgeUI");
@@ -146,9 +154,18 @@ public class UIcontroller :  MonoBehaviour {
         ManageBoostgage();
         ManageMagazinegage();
         ManageBoostTime();
+        ManageScore();
 
         inputText.text = playerController.moveX.ToString("f2");
         timeText.text = GameManager.masterTime.ToString("f0");
+
+
+}
+
+    private void ManageScore()
+    {
+        scoreText.text = GameManager.score.ToString();
+        scoreSlider.value = GameManager.score % scoreSlider.maxValue;
     }
 
     //ブースト残り時間の表示
@@ -252,28 +269,33 @@ public class UIcontroller :  MonoBehaviour {
     }
 
     //オート射撃モードをオンにする関数
-    void AutoShot()
+    public void AutoShot()
     {
         //1つのボタンにオン/オフ機能を割り当てるため現在の状態で処理を分岐
 
 
 
         //オートモードが実行中でない場合
-        if (player.GetComponent<PlayerController>().isAutoShot == false && isSelecting == false)
+        if (playerController.isAutoShot == false && isSelecting == false)
         {
-            player.GetComponent<PlayerController>().isAutoShot = true;
+            playerController.isAutoShot = true;
             isSelecting = true;
         }
 
 
         //オートモードが実行中の場合
-        if (player.GetComponent<PlayerController>().isAutoShot == true && isSelecting == false)
+        if (playerController.isAutoShot == true && isSelecting == false)
         {
-            player.GetComponent<PlayerController>().isAutoShot = false;
+            playerController.isAutoShot = false;
             isSelecting = true;
         }
 
         isSelecting = false;
+    }
+
+    public void exitButton()
+    {
+        UnityEngine.Application.Quit();
     }
 
 }

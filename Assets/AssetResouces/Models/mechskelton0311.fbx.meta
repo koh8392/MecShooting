@@ -467,6 +467,8 @@ ModelImporter:
     7400044: Move_Right
     7400046: Move_Left
     7400048: Title_idle
+    7400050: MoveL
+    7400052: MoveR
     9500000: //RootNode
     13700000: Chest24
     13700002: Chest25
