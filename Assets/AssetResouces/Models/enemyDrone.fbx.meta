@@ -30,6 +30,7 @@ ModelImporter:
     100048: R_UpperArm
     100050: Root
     100052: thruster
+    100054: Arm11
     400000: Arm10
     400002: Arm3
     400004: Arm4
@@ -57,6 +58,7 @@ ModelImporter:
     400048: R_UpperArm
     400050: Root
     400052: thruster
+    400054: Arm11
     2100000: eyeLight
     2100002: BodyMat
     2100004: lambert1
@@ -72,6 +74,7 @@ ModelImporter:
     4300018: missilePod
     4300020: missilePod1
     4300022: LongCannon
+    4300024: Arm11
     7400000: Take 001
     9500000: //RootNode
     13700000: Arm10
@@ -86,7 +89,13 @@ ModelImporter:
     13700018: LongCannon
     13700020: missilePod
     13700022: missilePod1
-  externalObjects: {}
+    13700024: Arm11
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BodyMat
+    second: {fileID: 2100000, guid: 68f462599aacdc14bbc0475dafecacb5, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -137,7 +146,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
+    previousCalculatedGlobalScale: 1
     hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60

@@ -8,6 +8,10 @@ public class PlayerController : MonoBehaviour {
 
     private GameState currentGameState;
 
+
+    [SerializeField]private float playerDefaultHP; //プレイヤーのデフォルトのHP
+    public float playerCurrentHP;                  //プレイヤーの現在のHP
+
     //プレイヤーの移動に関する変数
     public float moveX;
     private float moveY;
@@ -83,6 +87,12 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         //ゲームステートの変更を感知するため、ゲームステートの初期値を取得
         currentGameState = GameManager.gameState;
+
+        /*プレイヤーのHPに関する処理*/
+
+
+
+        /*プレイヤーのHPに関する処理ここまで*/
 
 
         /*プレイヤー移動に関する初期処理*/

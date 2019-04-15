@@ -25,6 +25,15 @@ public class EnemyController : MonoBehaviour {
     [SerializeField] public Vector3 enemySpawnOffset;   //敵の移動元の位置
     private Vector3 gameAreaPosition;
 
+    public enum EnemyState
+    {
+        StartMoving = 1,
+        Normal,
+
+    }
+
+    public EnemyState enemyState;
+
     // Use this for initialization
     void Awake () {
         enemyRigidBody = GetComponent<Rigidbody>();
@@ -34,27 +43,23 @@ public class EnemyController : MonoBehaviour {
         enemyCurrentHP = enemyMaxHP;
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
+
+        enemyState = EnemyState.StartMoving;
+
         isEnemyAlive = true;
         waitTime = 2.0f;
 
         gameAreaPosition = GameObject.Find("GameArea").GetComponent<Transform>().position;
-
-        //敵の登場処理
-
-        //offset(登場開始位置)移動
-        //GetComponent<Transform>().position = enemySpawnOffset;
-
-        //登場開始位置から初期位置に向けて移動
-        Sequence sequence = DOTween.Sequence().OnStart(() =>
-        { 
-            transform.DOLocalMove(gameAreaPosition + enemyMovePosition, 3.0f).SetEase(Ease.OutQuad);
-        });
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        EnemyMove();
+
+        if (enemyState == EnemyState.Normal)
+        {
+            EnemyMove();
+        }
+        
 
 	}
 
@@ -123,5 +128,19 @@ public class EnemyController : MonoBehaviour {
         //waitTime経過後に敵をデスポーン
         yield return new WaitForSeconds(waitTime);
         Destroy(gameObject);
+    }
+
+    public void setStateEnemyStart(float moveTime)
+    {
+        StartCoroutine("setStateEnemy" , moveTime);
+    }
+
+    //敵を開幕移動処理から通常状態に戻す処理
+    private IEnumerator setStateEnemy(float moveTime)
+    {
+        //開幕移動時間分待ったら
+        yield return new WaitForSeconds(moveTime);
+        //敵の状態を通常状態に変更
+        enemyState = EnemyState.Normal;
     }
 }
