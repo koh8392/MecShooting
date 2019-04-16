@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 114760637619325686}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -978,7 +978,7 @@ Animator:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1364695262943944}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 11f361231a51fcb46bec119bcaf866ee, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 70f800ca23539cc4c9926a6e06010819, type: 3}
   m_Controller: {fileID: 9100000, guid: 20ef718122c986b4da107ca5840dbba2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0

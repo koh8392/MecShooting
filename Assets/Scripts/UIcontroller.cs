@@ -27,6 +27,13 @@ public class UIcontroller :  MonoBehaviour {
     private Image magazineGageFillImage;                          //弾倉ゲージのimageコンポーネント 色変更に使用
     private Slider magazineGageSlider;                            //弾倉ゲージのSliderコンポーネント
 
+    private GameObject playerHPUI;                                //HPゲージUIのオブジェクト
+    private GameObject playerHPGageFill;                          //HPゲージのゲージ部分
+    private float playerHPGageValue;                              //HPゲージの残量
+    private Image playerHPGageFillImage;                          //HPゲージのimageコンポーネント 色変更に使用
+    private Slider playerHPGageSlider;                            //HPゲージのSliderコンポーネント
+
+
     private PlayerController playerController; //playerスクリプトのコンポーネント
     [SerializeField] private float boostGageAlertValue; //ブーストゲージの色変更の閾値
     [SerializeField] private float magazineGageAlertValue;//弾倉ゲージの色変更の閾値
@@ -87,9 +94,10 @@ public class UIcontroller :  MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        //
+        //プレイヤーの取得処理
         player = GameObject.Find("Player");
         playerController = player.GetComponent<PlayerController>();
+        //ゲームステートの管理
         currentGameState = GameManager.gameState;
 
         inputText = GameObject.Find("inputUI").GetComponent<Text>();
@@ -109,7 +117,6 @@ public class UIcontroller :  MonoBehaviour {
 
         //ブーストゲージのUI、コンポーネントを取得
         boostUI = GameObject.Find("BoostGage");
-
         boostGageFill = GameObject.Find("boostFill");
         boostGageFillImage = boostGageFill.gameObject.GetComponent<Image>();
         boostGageSlider = boostUI.GetComponent<Slider>();
@@ -119,6 +126,12 @@ public class UIcontroller :  MonoBehaviour {
         magazineGageFill = GameObject.Find("magazineFill");
         magazineGageFillImage = magazineGageFill.gameObject.GetComponent<Image>();
         magazineGageSlider = magazineUI.GetComponent<Slider>();
+
+        //HPゲージのUI、コンポーネントを取得
+        playerHPUI = GameObject.Find("HPGage");
+        playerHPGageFill = GameObject.Find("HPGageFill");
+        playerHPGageFillImage = playerHPGageFill.gameObject.GetComponent<Image>();
+        playerHPGageSlider = playerHPUI.GetComponent<Slider>();
 
         //ブースト残り時間関連のテキストを取得
         boostRemainTimeText = GameObject.Find("BoostTimeText").GetComponent<Text>();
@@ -153,6 +166,7 @@ public class UIcontroller :  MonoBehaviour {
     void Update() {
         ManageBoostgage();
         ManageMagazinegage();
+        ManagePlayerHPgage();
         ManageBoostTime();
         ManageScore();
 
@@ -216,6 +230,24 @@ public class UIcontroller :  MonoBehaviour {
         if (magazineGageValue > magazineGageAlertValue)
         {
             magazineGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
+        }
+    }
+
+    //HPゲージの管理処理
+    private void ManagePlayerHPgage()
+    {
+        //弾倉ゲージの値をplayerから取得して変更
+        playerHPGageValue = playerController.playerCurrentHP / playerController.playerDefaultHP;
+        playerHPGageSlider.value = playerHPGageValue;
+
+        //一定値以下の場合色を変更
+        if (playerHPGageValue < magazineGageAlertValue)
+        {
+            playerHPGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
+        }
+        if (playerHPGageValue > magazineGageAlertValue)
+        {
+            playerHPGageFillImage.color = new Color(gageColorR / 255.0f, gageColorG / 255.0f, gageColorB / 255.0f, gageColorAlpha / 255.0f);
         }
     }
 

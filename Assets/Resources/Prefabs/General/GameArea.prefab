@@ -7281,6 +7281,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e5924dd3e1e09540a76efdcc449220b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerDefaultHP: 300
+  playerCurrentHP: 0
   moveX: 0
   playerMoveSpeedX: 1
   playerMoveSpeedY: 1

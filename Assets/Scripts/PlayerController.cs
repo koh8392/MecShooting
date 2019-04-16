@@ -8,8 +8,7 @@ public class PlayerController : MonoBehaviour {
 
     private GameState currentGameState;
 
-
-    [SerializeField]private float playerDefaultHP; //プレイヤーのデフォルトのHP
+    public float playerDefaultHP;                  //プレイヤーのデフォルトのHP
     public float playerCurrentHP;                  //プレイヤーの現在のHP
 
     //プレイヤーの移動に関する変数
@@ -83,6 +82,8 @@ public class PlayerController : MonoBehaviour {
     private float bulletSpeed;                         //弾速
     private float bulletFireRate;                      //リロード間隔
 
+    private bool isTouched;
+
     // Use this for initialization
     void Start() {
         //ゲームステートの変更を感知するため、ゲームステートの初期値を取得
@@ -90,7 +91,9 @@ public class PlayerController : MonoBehaviour {
 
         /*プレイヤーのHPに関する処理*/
 
+        playerCurrentHP = playerDefaultHP;
 
+        Debug.Log(playerCurrentHP);
 
         /*プレイヤーのHPに関する処理ここまで*/
 
@@ -568,6 +571,25 @@ public class PlayerController : MonoBehaviour {
                 break;
         }
 
+    }
+
+    //敵との接触時にプレイヤーのHPを減らす処理
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy" && isTouched == false)
+        {
+            playerCurrentHP -= 20;
+            isTouched = true;
+            StartCoroutine("setTouchFlag");
+     
+            Debug.Log("敵と接触。現在のHPは" + playerCurrentHP);
+        }
+    }
+
+    private IEnumerator setTouchFlag()
+    {
+        yield return new WaitForSeconds(1.0f);
+        isTouched = false;
     }
 
 
