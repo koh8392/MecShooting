@@ -28,7 +28,6 @@ public class PurgeBooster : MonoBehaviour {
     }
 
     public IEnumerator SetCollapseCoroutine() {
-        Debug.Log("破壊処理を予約");
         yield return new WaitForSeconds(1.0f);
         Vector3 boostPosition = GetComponent<Transform>().position;
         //ブースター自体を切り離し後方に移動開始
@@ -41,7 +40,6 @@ public class PurgeBooster : MonoBehaviour {
 
     public void CollapseObject()
     {
-        Debug.Log("破壊処理を開始します");
 
         //randomは整数しか取り出せない
         var random = new System.Random();

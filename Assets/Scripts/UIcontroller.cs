@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Linq;
 using GameParameters;
+using PlayerControllerScript;
 
 public class UIcontroller :  MonoBehaviour {
     //プレイヤーのオブジェクトを取得
@@ -96,7 +97,9 @@ public class UIcontroller :  MonoBehaviour {
     void Start() {
         //プレイヤーの取得処理
         player = GameObject.Find("Player");
+        //プレイヤーのスクリプトの取得処理
         playerController = player.GetComponent<PlayerController>();
+
         //ゲームステートの管理
         currentGameState = GameManager.gameState;
 
@@ -276,7 +279,7 @@ public class UIcontroller :  MonoBehaviour {
     public IEnumerator FadeOutUI()
     {
         yield return new WaitForSeconds(purgeUIEndDuration);
-        Debug.Log("UI点滅終了処理開始");
+
         //canvasgroupの透明度に対してDoFadeでTween
 
         purgeUIalpha = purgeUICanvas.alpha;
@@ -300,29 +303,36 @@ public class UIcontroller :  MonoBehaviour {
 
     }
 
-    //オート射撃モードをオンにする関数
+    //オート射撃モードを切り替える関数
     public void AutoShot()
     {
-        //1つのボタンにオン/オフ機能を割り当てるため現在の状態で処理を分岐
 
-
+        
 
         //オートモードが実行中でない場合
-        if (playerController.isAutoShot == false && isSelecting == false)
+        if (isSelecting == false)
         {
-            playerController.isAutoShot = true;
+            //playerContoroller内のオート射撃切り替え処理を実行
+            //GameObject.Find("Player").GetComponent<PlayerController>().setAutoShot();
+            playerController.setAutoShot();
+            //切り替えフラグをonにして1回しか起動されないように
             isSelecting = true;
+
         }
 
+        GameObject.Find("AutoShot").GetComponent<Toggle>().isOn = GameObject.Find("Player").GetComponent<PlayerController>().isAutoShot;
 
-        //オートモードが実行中の場合
-        if (playerController.isAutoShot == true && isSelecting == false)
-        {
-            playerController.isAutoShot = false;
-            isSelecting = true;
-        }
+        //切り替えフラグを切る処理を予約
+        StartCoroutine(resetAutoShotFlag());
+        
+    }
 
+    //切り替えフラグをオフにする処理
+    private IEnumerator resetAutoShotFlag()
+    {
+        yield return new WaitForSeconds(0.2f);
         isSelecting = false;
+
     }
 
     public void exitButton()

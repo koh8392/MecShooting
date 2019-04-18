@@ -29,7 +29,7 @@ public class WingmateController : MonoBehaviour {
         {
             //FadeOutMesh();
             DestroyMesh();
-            Debug.Log("Hit" + other.gameObject.name);
+            //Debug.Log("Hit" + other.gameObject.name);
         }
     }
 
