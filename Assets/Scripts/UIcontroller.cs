@@ -335,6 +335,11 @@ public class UIcontroller :  MonoBehaviour {
 
     }
 
+    public void weaponChangeButton()
+    {
+        playerController.weaponChange;
+    }
+
     public void exitButton()
     {
         UnityEngine.Application.Quit();

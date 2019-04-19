@@ -598,6 +598,11 @@ namespace PlayerControllerScript
             isTouched = false;
         }
 
+        public void weaponChange()
+        {
+
+        }
+
         //自動射撃のオンオフを切り替えるセッター
         public void setAutoShot()
         {
