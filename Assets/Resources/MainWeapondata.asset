@@ -19,16 +19,27 @@ MonoBehaviour:
     - R_CarbinRifle
     muzzleOffset: {x: 2.5, y: 0, z: 2}
     numOfBulletsPerMuzzle: 1
-    idleMotionFlag: Doubleshot_shot
+    idleMotionFlag: Doubleshot_set
     shotMethodName: shotDMG
     bulletPrefabName: DMG_Bullet
     bulletConsumption: 8
-  - weaponName: 
-    numOfMuzzles: 0
-    listofMuzzleObjectName: []
-    muzzleOffset: {x: 0, y: 0, z: 0}
-    numOfBulletsPerMuzzle: 0
-    idleMotionFlag: 
-    shotMethodName: 
-    bulletPrefabName: 
-    bulletConsumption: 0
+    currentBullet: 1
+    bulletPower: 2
+    bulletSpeed: 3500
+    bulletDeathTime: 2
+    bulletFireRate: 200
+  - weaponName: Rifle
+    numOfMuzzles: 1
+    listofMuzzleObjectName:
+    - LongRifle
+    muzzleOffset: {x: -5.9, y: 6.8, z: 5}
+    numOfBulletsPerMuzzle: 1
+    idleMotionFlag: Rifle_set
+    shotMethodName: shotLongRifle
+    bulletPrefabName: Rifle_Bullet
+    bulletConsumption: 15
+    currentBullet: 4
+    bulletPower: 25
+    bulletSpeed: 5500
+    bulletDeathTime: 4
+    bulletFireRate: 2000

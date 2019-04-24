@@ -69,11 +69,13 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
+    <Compile Include="Assets\DisplayController.cs" />
     <Compile Include="Assets\Scripts\AutoDestroy.cs" />
     <Compile Include="Assets\Scripts\BeamController.cs" />
     <Compile Include="Assets\Scripts\BeamManager.cs" />
     <Compile Include="Assets\Scripts\BulletController.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\EditManager.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\Enemydata.cs" />
     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
@@ -87,11 +89,12 @@
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\PlayUITag.cs" />
     <Compile Include="Assets\Scripts\PurgeBooster.cs" />
+    <Compile Include="Assets\Scripts\SubWeapondata.cs" />
+    <Compile Include="Assets\Scripts\TitleManager.cs" />
     <Compile Include="Assets\Scripts\UIcontroller.cs" />
     <Compile Include="Assets\Scripts\WarpOut.cs" />
     <Compile Include="Assets\Scripts\Weapondata.cs" />
     <Compile Include="Assets\Scripts\WingmateController.cs" />
-    <Compile Include="Assets\TitleManager.cs" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameParameters;
+
+
 
 [CreateAssetMenu(menuName = "WeaponData/Create")]
 public class Weapondata : ScriptableObject {
@@ -39,4 +42,21 @@ public class WeaponStatus
     //弾丸のエネルギー消費量
     public int bulletConsumption;
 
+    //弾丸の属性
+    public bulletSpecies currentBullet;
+
+    //弾丸の威力
+    public float bulletPower;
+
+    //弾速
+    public float bulletSpeed;
+
+    //弾丸の持続時間
+    public float bulletDeathTime;
+
+    //射撃レート　x/(60s * 60fps)で記入
+    public float bulletFireRate;
+
+    //弾丸にエフェクト再生処理を行うかどうか
+    public bool hasBulletEffect;
 }

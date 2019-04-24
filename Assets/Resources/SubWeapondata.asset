@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e948c3a27f641b043a1a261d6766d63c, type: 3}
+  m_Name: SubWeapondata
+  m_EditorClassIdentifier: 
+  subWeaponStatusList:
+  - weaponName: Cannon
+    numOfMuzzles: 1
+    listofMuzzleObjectName:
+    - L_Cannonbarrel3
+    listofVisualObjectName:
+    - L_Cannon
+    - L_Cannonbarrel2
+    - R_Cannonscope
+    muzzleOffset: {x: 0, y: 0, z: 0}
+    numOfBulletsPerMuzzle: 1
+    idleMotionFlag: 
+    shotMethodName: shotCannon
+    bulletPrefabName: Cannon_Bullet
+    bulletConsumption: 50
+    currentBullet: 2
+    bulletPower: 1800
+    bulletSpeed: 1500
+    bulletDeathTime: 3
+    bulletFireRate: 3000
+    hasBulletEffect: 1

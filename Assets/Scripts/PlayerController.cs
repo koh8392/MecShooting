@@ -55,36 +55,51 @@ namespace PlayerControllerScript
         private List<GameObject> particleStarterR_List;
 
 
-        //プレイヤーの射撃に関する変数
-        private GameObject bullet01;                   //生成する弾丸
-        private GameObject bullet02;          //ダブルショットの場合2発目の弾丸
-        private GameObject bulletPrefab;               //弾丸のプレファブ
+        //プレイヤーの射撃全体に関わる変数
+
         private GameObject muzzle;
         private Transform muzzleTransform;            //銃口のTransform
-        private Vector3 shootForce;                    //射撃する際に加える力
-        private float reloadTimer;                     //リロード用のタイマー
+
         public bool isAutoShot;                        //オートで射撃を行うか
+
+        //データから代入する武器情報の格納先
+
+
+        //メインウェポンに関する変数
+        private Weapondata weaponData;                 //武器データの格納先(ScriptableObject)
+        private WeaponStatus weaponStatus;             //武器の種類(ScriptableObject内のリスト)
         private WeaponType weaponType;                 //武器の種類
-        private SubWeaponType subWeaponType;           //サブウェポンの種類
+
+        private GameObject bulletPrefab;               //弾丸のプレファブ
+        private float reloadTimer;                     //リロード用のタイマー
+
         private GameObject muzzleObject_L;             //発射点のオブジェクト(左)
         private GameObject muzzleObject_R;             //発射点のオブジェクト(右)
         private Transform muzzleObject_L_transform;    //発射点オブジェクトのトランスフォーム(右)
         private Transform muzzleObject_R_transform;    //発射点オブジェクトトランスフォーム(左)
-        private Vector3 muzzleObjectL_bulletPos;       //弾丸の生成位置
-        private Vector3 muzzleObjectR_bulletPos;       //弾丸の生成位置
-        private int bulletConsumption;                 //1発当たりのマガジン消費量 
 
-        public float magazineGage;                     //弾倉の残量
+        public float RemainMagazine;                //弾倉の残量
         private float magazineConsumption;             //弾倉の発射時の消費量
+        private float bulletFireRate;                  //リロード間隔
 
-        //データから代入する武器情報の格納先
-        private Weapondata weaponData;
-        private WeaponStatus weaponStatus;
+        //サブウェポンに関する変数
 
-        //弾丸の情報
-        //private float bulletPower;                       //弾丸の威力
-        private float bulletSpeed;                         //弾速
-        private float bulletFireRate;                      //リロード間隔
+        private SubWeapondata subweaponData;                 //武器データの格納先(ScriptableObject)
+        private SubWeaponStatus subweaponStatus;             //武器の種類(ScriptableObject内のリスト)
+        private SubWeaponType subweaponType;              //武器の種類
+
+        private GameObject subBulletPrefab;               //弾丸のプレファブ
+        private float reloadSubWeaponTimer;                     //リロード用のタイマー
+
+        private GameObject subMuzzleObject_L;             //発射点のオブジェクト(左)
+        private GameObject subMuzzleObject_R;             //発射点のオブジェクト(右)
+        private Transform subMuzzleObject_L_transform;    //発射点オブジェクトのトランスフォーム(右)
+        private Transform subMuzzleObject_R_transform;    //発射点オブジェクトトランスフォーム(左)
+
+        public float  subRemainMagazine;                     //弾倉の残量
+        private float subMagazineConsumption;             //弾倉の発射時の消費量
+        private float subBulletFireRate;                  //リロード間隔
+
 
         private bool isTouched;
 
@@ -96,9 +111,20 @@ namespace PlayerControllerScript
 
             /*プレイヤーのHPに関する処理*/
 
-            playerCurrentHP = playerDefaultHP;
+                playerCurrentHP = playerDefaultHP;
 
             /*プレイヤーのHPに関する処理ここまで*/
+
+            /*アニメーションに関する処理*/
+            playerModel = GameObject.Find("mechmodel");
+            playerAnimator = playerModel.GetComponent<Animator>();
+
+            //アニメーション変更中のフラグをオフ
+            isStateChanged = false;
+            //移動時のアニメーション変更中のフラグをオフ
+            isMoveAnimationChanged = false;
+
+            /*アニメーションに関する処理ここまで*/
 
 
             /*プレイヤー移動に関する初期処理*/
@@ -106,12 +132,19 @@ namespace PlayerControllerScript
             //プレイヤーのrigidbodyを取得
             playerRigidBody = GetComponent<Rigidbody>();
 
-            //インスペクターで設定した移動限界の値を逆方向の変数にも代入
-            negativeLimitX = -limitX;
+                //インスペクターで設定した移動限界の値を逆方向の変数にも代入
+                negativeLimitX = -limitX;
 
             /*プレイヤー移動に関する初期処理ここまで*/
 
 
+            //武器データの読み込み。weaponStatus紐付け部分はSetWeaponStatus内にモジュール化
+            //武器の種類を設定
+            weaponType = WeaponType.doubleMachineGun;
+
+            SetWeaponStatus(WeaponType.doubleMachineGun);
+
+            SetSubWeaponStatus(SubWeaponType.cannon);
 
 
             /*プレイヤーの緊急回避に関する初期処理*/
@@ -119,13 +152,23 @@ namespace PlayerControllerScript
             //緊急回避中のフラグの初期値はオフ
             isRolling = false;
 
-            //インスペクターで設定した緊急回避距離を逆方向の変数にも代入
-            negativeRollDistance = -rollDistance;
+                //インスペクターで設定した緊急回避距離を逆方向の変数にも代入
+                negativeRollDistance = -rollDistance;
 
-            //緊急回避の初期方向を設定 
-            currentRollDirection = 0;
+                //緊急回避の初期方向を設定 
+                currentRollDirection = 0;
 
             /*プレイヤーの緊急回避に関する初期処理ここまで*/
+
+            //ブーストゲージと弾倉ゲージの初期値を設定
+            boostGage = 0.0f;
+            RemainMagazine = 0.0f;
+            subRemainMagazine = 0.0f;
+        }
+
+
+        private void SetWeaponStatus(WeaponType weaponType)
+        {
 
             /*射撃に関する処理*/
 
@@ -133,10 +176,7 @@ namespace PlayerControllerScript
             muzzle = transform.Find("PlayerMuzzle").gameObject;
             muzzleTransform = muzzle.GetComponent<Transform>();
 
-
             /*武器データの読み込みに関する変数*/
-            //武器の種類を設定
-            weaponType = WeaponType.doubleMachineGun;
 
             //武器データのScriptableObject全体を読み込み
             weaponData = Resources.Load<Weapondata>("MainWeapondata");
@@ -145,7 +185,12 @@ namespace PlayerControllerScript
 
             Debug.Log("選択中の武器は" + weaponStatus.weaponName);
 
+            /*武器データの読み込みに関する変数ここまで*/
+
             /*武器設定の読み込み処理*/
+
+            //射出点の数を取得
+            int numOfMuzzleObject = weaponStatus.listofMuzzleObjectName.Count;
 
             //射出点のオブジェクトのモデルを取得
             string muzzleObjectName_L = "mechmodel/" + weaponStatus.listofMuzzleObjectName[0];
@@ -153,11 +198,16 @@ namespace PlayerControllerScript
 
             //射出点のオブジェクトのトランスフォームを取得
             muzzleObject_L_transform = muzzleObject_L.GetComponent<Transform>();
+            muzzleObject_L.SetActive(true);
 
-            //以下同様
-            string muzzleObjectName_R = "mechmodel/" + weaponStatus.listofMuzzleObjectName[1];
-            muzzleObject_R = transform.Find(muzzleObjectName_R).gameObject;
-            muzzleObject_R_transform = muzzleObject_R.GetComponent<Transform>();
+            if (numOfMuzzleObject == 2)
+            {
+                string muzzleObjectName_R = "mechmodel/" + weaponStatus.listofMuzzleObjectName[1];
+                muzzleObject_R = transform.Find(muzzleObjectName_R).gameObject;
+                muzzleObject_R_transform = muzzleObject_R.GetComponent<Transform>();
+                muzzleObject_R.SetActive(true);
+
+            }
 
             //弾倉消費量を取得
             magazineConsumption = weaponStatus.bulletConsumption;
@@ -176,38 +226,84 @@ namespace PlayerControllerScript
             bulletPrefab = (GameObject)Resources.Load(currentBulletName);
 
             //弾丸のパラメータを事前取得
-            bulletFireRate = bulletPrefab.GetComponent<BulletController>().bulletFireRate;
+            bulletFireRate = weaponStatus.bulletFireRate;
 
             //射撃レートを秒数に変換(レート/60秒/FixedUpdate60FPS)
             bulletFireRate = bulletFireRate / 3600;
-            bulletSpeed = bulletPrefab.GetComponent<BulletController>().bulletSpeed;
-            reloadTimer = bulletFireRate;
+            reloadTimer = 0;
 
             /*弾薬の読み込み処理ここまで*/
 
-            /*射撃に関する処理*ここまで/
+            playerAnimator.SetBool(weaponStatus.idleMotionFlag, true);
 
-
-
-            /*アニメーションに関する処理*/
-            playerModel = GameObject.Find("mechmodel");
-            playerAnimator = playerModel.GetComponent<Animator>();
-
-            //アニメーション変更中のフラグをオフ
-            isStateChanged = false;
-            //移動時のアニメーション変更中のフラグをオフ
-            isMoveAnimationChanged = false;
-
-            /*アニメーションに関する処理ここまで*/
-
-
-
-            //ブーストゲージと弾倉ゲージの初期値を設定
-            boostGage = 0.0f;
-            magazineGage = 0.0f;
-
+            /*射撃に関する処理*ここまで*/
         }
 
+        private void SetSubWeaponStatus(SubWeaponType subweaponType)
+        {
+            
+            /*射撃に関する処理*/
+
+            /*武器データの読み込みに関する変数*/
+            
+            //武器データのScriptableObject全体を読み込み
+            subweaponData = Resources.Load<SubWeapondata>("SubWeapondata");
+
+            subweaponStatus = subweaponData.subWeaponStatusList[(int)subweaponType];
+
+            Debug.Log("選択中の武器は" +subweaponStatus.weaponName);
+            
+            /*武器データの読み込みに関する変数ここまで*/
+
+            /*武器設定の読み込み処理*/
+
+            //射出点の数を取得
+            int numOfSubWeaponMuzzleObject = subweaponStatus.listofMuzzleObjectName.Count;
+
+            //射出点のオブジェクトのモデルを取得
+            string subMuzzleObjectName_L = "mechmodel/" + subweaponStatus.listofMuzzleObjectName[0];
+            subMuzzleObject_L = transform.Find(subMuzzleObjectName_L).gameObject;
+
+            //射出点のオブジェクトのトランスフォームを取得
+            subMuzzleObject_L_transform = subMuzzleObject_L.GetComponent<Transform>();
+            subMuzzleObject_L.SetActive(true);
+
+            if (numOfSubWeaponMuzzleObject == 2)
+            {
+                string subMuzzleObjectName_R = "mechmodel/" + subweaponStatus.listofMuzzleObjectName[1];
+                subMuzzleObject_R = transform.Find(subMuzzleObjectName_R).gameObject;
+                subMuzzleObject_R_transform = subMuzzleObject_R.GetComponent<Transform>();
+                subMuzzleObject_R.SetActive(true);
+
+            }
+
+            //弾倉消費量を取得
+            subMagazineConsumption = subweaponStatus.bulletConsumption;
+
+            /*武器設定の読み込み処理ここまで*/
+
+
+
+            /*弾薬の読み込み処理*/
+
+            //弾丸のプレハブをロードする処理
+            //weaponDataから読み込む弾丸のパスを文字列で生成
+            string currentBulletName = "Prefabs/General/" + subweaponStatus.bulletPrefabName;
+
+            //弾丸のプレハブを読み込み
+            subBulletPrefab = (GameObject)Resources.Load(currentBulletName);
+
+            //弾丸のパラメータを事前取得
+            subBulletFireRate = subweaponStatus.bulletFireRate;
+
+            //射撃レートを秒数に変換(レート/60秒/FixedUpdate60FPS)
+            subBulletFireRate = subBulletFireRate / 3600;
+            reloadSubWeaponTimer = 0;
+
+            /*弾薬の読み込み処理ここまで*/
+            
+            /*射撃に関する処理*ここまで*/
+        }
 
 
         // Update is called once per frame
@@ -227,6 +323,7 @@ namespace PlayerControllerScript
                 Roll();              //緊急回避
                 PlayerMove();        //移動
                 PlayerShot();        //射撃
+                PlayerSubShot();
             }
         }
 
@@ -248,7 +345,7 @@ namespace PlayerControllerScript
                 switch (GameManager.gameState)
                 {
                     case GameState.play:
-                        playerAnimator.SetBool("DoubleShot_set", true);
+                        playerAnimator.SetBool(weaponStatus.idleMotionFlag, true);
                         break;
 
                     case GameState.boosted:
@@ -282,9 +379,14 @@ namespace PlayerControllerScript
                     boostGage += 1;
                 }
 
-                if (magazineGage < 100)
+                if (RemainMagazine < 100)
                 {
-                    magazineGage += 1;
+                    RemainMagazine += 1;
+                }
+
+                if (subRemainMagazine < 100)
+                {
+                    subRemainMagazine += 1;
                 }
             }
         }
@@ -347,8 +449,10 @@ namespace PlayerControllerScript
             {
                 //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
 
-                if (reloadTimer >= bulletFireRate && magazineGage >= magazineConsumption)
+                if (reloadTimer >= bulletFireRate && RemainMagazine >= magazineConsumption)
                 {
+
+                    
 
                     if (weaponType == WeaponType.doubleMachineGun)
                     {
@@ -358,6 +462,7 @@ namespace PlayerControllerScript
                     if (weaponType == WeaponType.longRifle)
                     {
                         shotLongRifle();
+
                     }
                 }
 
@@ -373,53 +478,153 @@ namespace PlayerControllerScript
             reloadTimer = 0.0f;
 
             //射出前に弾倉ゲージを減らす
-            magazineGage -= magazineConsumption;
+            RemainMagazine -= magazineConsumption;
 
             //左の銃弾の生成
 
             //生成位置は射出点のオブジェクトにオフセット分ずらした座標
-            muzzleObjectL_bulletPos = new Vector3(muzzleObject_L_transform.position.x + weaponStatus.muzzleOffset.x,
+            Vector3 muzzleObjectL_bulletPos = new Vector3(muzzleObject_L_transform.position.x + weaponStatus.muzzleOffset.x,
                                                   muzzleObject_L_transform.position.y + weaponStatus.muzzleOffset.y,
                                                   muzzleObject_L_transform.position.z + weaponStatus.muzzleOffset.z);
             //読み込んでいた弾丸のプレファブを生成
-            bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
+            GameObject bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
 
 
 
             //右の銃弾の生成処理
             //生成位置は射出点のオブジェクトにオフセット分ずらした座標
-            muzzleObjectR_bulletPos = new Vector3(muzzleObject_R_transform.position.x - weaponStatus.muzzleOffset.x,
+            Vector3 muzzleObjectR_bulletPos = new Vector3(muzzleObject_R_transform.position.x - weaponStatus.muzzleOffset.x,
                                                   muzzleObject_R_transform.position.y + weaponStatus.muzzleOffset.y,
                                                   muzzleObject_R_transform.position.z + weaponStatus.muzzleOffset.z);
             //読み込んでいた弾丸のプレファブを生成
-            bullet02 = Instantiate(bulletPrefab, muzzleObjectR_bulletPos, muzzleTransform.rotation) as GameObject;
+            GameObject bullet02 = Instantiate(bulletPrefab, muzzleObjectR_bulletPos, muzzleTransform.rotation) as GameObject;
 
-
+            //弾丸に威力などのデータを渡す
+            setBulletStatusToInstance(bullet01);
+            setBulletStatusToInstance(bullet02);
 
             //銃弾に力を加えて発射。
-            shootForce = muzzle.transform.forward * bulletSpeed;
+            Vector3 shootForce = muzzle.transform.forward * weaponStatus.bulletSpeed;
             bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
 
             //銃弾に力を加えて発射。
-            shootForce = muzzle.transform.forward * bulletSpeed;
+            shootForce = muzzle.transform.forward * weaponStatus.bulletSpeed;
             bullet02.GetComponent<Rigidbody>().AddForce(shootForce);
 
             //発射アニメーションを実行
-            playerAnimator.SetBool("Doubleshot_shot", true);
-
+                playerAnimator.SetTrigger("Doubleshot_shot");
         }
 
         private void shotLongRifle()
         {
-            //未実装
+            //リロードタイマーを0にする
+            reloadTimer = 0.0f;
+
+            //射出前に弾倉ゲージを減らす
+            RemainMagazine -= magazineConsumption;
+
+            //左の銃弾の生成
+
+            //生成位置は射出点のオブジェクトにオフセット分ずらした座標
+            Vector3 muzzleObjectL_bulletPos = new Vector3(muzzleObject_L_transform.position.x + weaponStatus.muzzleOffset.x,
+                                                  muzzleObject_L_transform.position.y + weaponStatus.muzzleOffset.y,
+                                                  muzzleObject_L_transform.position.z + weaponStatus.muzzleOffset.z);
+            //読み込んでいた弾丸のプレファブを生成
+            GameObject bullet01 = Instantiate(bulletPrefab, muzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
+
+            setBulletStatusToInstance(bullet01);
+
+           //銃弾に力を加えて発射。
+           Vector3 shootForce = muzzle.transform.forward * weaponStatus.bulletSpeed;
+            bullet01.GetComponent<Rigidbody>().AddForce(shootForce);
+
+            //発射アニメーションを実行
+            playerAnimator.SetTrigger("Rifle_shot");
         }
 
+        //弾丸に情報を設定する処理。引数：弾丸のGameobject
+        private void setBulletStatusToInstance(GameObject selectedBullet)
+        {
+            //対象のbulletのbulletcontrollerを取得
+            BulletController selectedBulletController = selectedBullet.GetComponent<BulletController>();
+
+            //各値をweaponStatusに格納された値から渡す。
+            selectedBulletController.currentBullet = weaponStatus.currentBullet;
+            selectedBulletController.bulletPower = weaponStatus.bulletPower;
+            selectedBulletController.bulletDeathTime = weaponStatus.bulletPower;
+            selectedBulletController.hasBulletEffect = weaponStatus.hasBulletEffect;
+        }
+
+
+        //プレイヤーの攻撃に関する処理
+        void PlayerSubShot()
+        {
+            //マウス右ボタンを押している間orオート射撃がオンの際に射撃関数を実行する。
+            if (Input.GetKey(KeyCode.Mouse1) || isAutoShot == true)
+            {
+                //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
+
+                if (reloadSubWeaponTimer >= subBulletFireRate && subRemainMagazine >= subMagazineConsumption)
+                {
+
+                    if (subweaponType == SubWeaponType.cannon)
+                    {
+                        shotCannon();
+                    }
+
+                }
+
+            }
+
+        }
+
+        void shotCannon()
+        {
+            //リロードタイマーを0にする
+            reloadSubWeaponTimer = 0.0f;
+
+            //射出前に弾倉ゲージを減らす
+            subRemainMagazine -= subMagazineConsumption;
+
+            //左の銃弾の生成
+
+            //生成位置は射出点のオブジェクトにオフセット分ずらした座標
+            Vector3 subMuzzleObjectL_bulletPos = new Vector3(subMuzzleObject_L_transform.position.x + subweaponStatus.muzzleOffset.x,
+                                                  subMuzzleObject_L_transform.position.y + subweaponStatus.muzzleOffset.y,
+                                                  subMuzzleObject_L_transform.position.z + subweaponStatus.muzzleOffset.z);
+
+            //読み込んでいた弾丸のプレファブを生成
+            GameObject bullet = Instantiate(subBulletPrefab, subMuzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
+
+            setSubBulletStatusToInstance(bullet);
+
+            //銃弾に力を加えて発射。
+            bullet.GetComponent<Rigidbody>().DOMoveZ(transform.position.z + 100 , 2).SetEase(Ease.OutQuad);
+
+            //発射アニメーションを実行
+            //playerAnimator.SetTrigger("Rifle_shot");
+        }
+
+
+        //弾丸に情報を設定する処理。引数：弾丸のGameobject
+        private void setSubBulletStatusToInstance(GameObject selectedBullet)
+        {
+            //対象のbulletのbulletcontrollerを取得
+            BulletController selectedBulletController = selectedBullet.GetComponent<BulletController>();
+
+            //各値をweaponStatusに格納された値から渡す。
+            selectedBulletController.currentBullet = subweaponStatus.currentBullet;
+            selectedBulletController.bulletPower = subweaponStatus.bulletPower;
+            selectedBulletController.bulletDeathTime = subweaponStatus.bulletDeathTime;
+            selectedBulletController.hasBulletEffect = subweaponStatus.hasBulletEffect;
+        }
 
         //各クール計算のためのタイマー
         void Timer()
         {
             //毎フレームdeltaTimeを加算
             reloadTimer += Time.deltaTime;
+            reloadSubWeaponTimer += Time.deltaTime;
             rollRecastTimer += Time.deltaTime;
             moveMotionTimer += Time.deltaTime;
         }
@@ -452,8 +657,8 @@ namespace PlayerControllerScript
                         currentRollDirection = 2;
                     }
 
-                    if (!playerAnimator.IsInTransition(0))
-                    {
+                    //if (!playerAnimator.IsInTransition(0))
+                    //{
                         //移動後のXの値が許容範囲を超えない際
                         if ((playerRigidBody.transform.position.x + rollDistance) <= limitX && playerRigidBody.transform.position.x + negativeRollDistance >= negativeLimitX)
                         {
@@ -465,7 +670,7 @@ namespace PlayerControllerScript
                                     //移動可能範囲を超えないのでそのまま代入
                                     finallyRollDistance = negativeRollDistance;
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoLeft", true);
+                                    playerAnimator.SetTrigger("Roll_toLeft");
                                     //リスト内に格納されたオブジェクトそれぞれにパーティクル動作開始メソッドを実行
                                     foreach (GameObject particleStarterChildren in particleStarterR_List)
                                     {
@@ -477,8 +682,8 @@ namespace PlayerControllerScript
                                     //移動可能範囲を超えないのでそのまま代入
                                     finallyRollDistance = rollDistance;
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoRight", true);
-                                    foreach (GameObject particleStarterChildren in particleStarterL_List)
+                                    playerAnimator.SetTrigger("Roll_toRight");
+                                foreach (GameObject particleStarterChildren in particleStarterL_List)
                                     {
                                         particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
                                     }
@@ -494,7 +699,7 @@ namespace PlayerControllerScript
                                     //Debug.Log("左にステップ");
                                     finallyRollDistance = negativeRollDistance;
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoLeft", true);
+                                    playerAnimator.SetTrigger("Roll_toLeft");
                                     foreach (GameObject particleStarterChildren in particleStarterR_List)
                                     {
                                         particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
@@ -505,7 +710,7 @@ namespace PlayerControllerScript
                                     //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
                                     finallyRollDistance = Mathf.Clamp(limitX - playerRigidBody.transform.position.x, 0, limitX);
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoRight", true);
+                                    playerAnimator.SetTrigger("Roll_toRight");
                                     foreach (GameObject particleStarterChildren in particleStarterL_List)
                                     {
                                         particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
@@ -523,8 +728,8 @@ namespace PlayerControllerScript
                                     //Debug.Log("左に超過");
                                     finallyRollDistance = Mathf.Clamp(negativeLimitX - playerRigidBody.transform.position.x, negativeLimitX, 0);
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoLeft", true);
-                                    foreach (GameObject particleStarterChildren in particleStarterR_List)
+                                    playerAnimator.SetTrigger("Roll_toLeft");
+                                foreach (GameObject particleStarterChildren in particleStarterR_List)
                                     {
                                         particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
                                     }
@@ -534,15 +739,15 @@ namespace PlayerControllerScript
                                     //ステップ距離が超過しないように、limitxとの残りの距離分だけ移動させる
                                     finallyRollDistance = rollDistance;
                                     //Debug.Log("現在地は" + playerRigidBody.transform.position.x + "ステップ距離は" + finallyRollDistance);
-                                    playerAnimator.SetBool("rolltoRight", true);
-                                    foreach (GameObject particleStarterChildren in particleStarterL_List)
+                                    playerAnimator.SetTrigger("Roll_toRight");
+                                foreach (GameObject particleStarterChildren in particleStarterL_List)
                                     {
                                         particleStarterChildren.GetComponent<ParticleStarter>().StartParticle();
                                     }
                                     break;
                             }
                         }
-                    }
+                    //}
 
 
                     //Dotweenで緊急回避の移動処理を実行
@@ -566,17 +771,6 @@ namespace PlayerControllerScript
             //緊急回避フラグをオフ
             isRolling = false;
 
-            //モーションを通常状態に戻す
-            switch (currentRollDirection)
-            {
-                case 1:
-                    playerAnimator.SetBool("rolltoLeft", false);
-                    break;
-                case 2:
-                    playerAnimator.SetBool("rolltoRight", false);
-                    break;
-            }
-
         }
 
         //敵との接触時にプレイヤーのHPを減らす処理
@@ -598,8 +792,32 @@ namespace PlayerControllerScript
             isTouched = false;
         }
 
+        //武器を切り替える処理
         public void weaponChange()
         {
+            //現在の装備の見た目をオフに
+            muzzleObject_L.SetActive(false);
+            muzzleObject_R.SetActive(false);
+            playerAnimator.SetBool(weaponStatus.idleMotionFlag, false);
+
+
+
+            /*武器データの読み込みに関する変数*/
+            //武器の種類を設定
+            switch (weaponType)
+                {
+                    case WeaponType.longRifle:
+                        weaponType = WeaponType.doubleMachineGun;
+                        break;
+
+                    case WeaponType.doubleMachineGun:
+                        weaponType = WeaponType.longRifle;
+                        break;
+
+                }
+
+            SetWeaponStatus(weaponType);
+
 
         }
 

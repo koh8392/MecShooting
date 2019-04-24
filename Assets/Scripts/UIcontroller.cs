@@ -222,7 +222,7 @@ public class UIcontroller :  MonoBehaviour {
     //弾倉ゲージの管理処理
     private void ManageMagazinegage() {
         //弾倉ゲージの値をplayerから取得して変更
-        magazineGageValue = playerController.magazineGage;
+        magazineGageValue = playerController.RemainMagazine;
         magazineGageSlider.value = magazineGageValue;
 
         //一定値以下の場合色を変更
@@ -337,7 +337,7 @@ public class UIcontroller :  MonoBehaviour {
 
     public void weaponChangeButton()
     {
-        playerController.weaponChange;
+        playerController.weaponChange();
     }
 
     public void exitButton()

@@ -1,39 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameParameters;
+
+
 
 public class BulletController : MonoBehaviour {
 
     private GameObject player;   //プレイヤーの持続時間
     private float time;          //ローカル時間
 
-    //弾丸の属性
-    public enum bulletSpecies
-    {
-        none = 0,
-        normal,
-        he,
-        ap,
-        beam,
-    };
-
     //弾丸の情報(インスペクター上で記述)
-    public float bulletPower;                       //弾丸の威力
     public bulletSpecies currentBullet;             //弾丸の属性
-    public float bulletSpeed;                       //弾速
+    public float bulletPower;                       //弾丸の威力
     public float bulletDeathTime;                   //弾丸の持続時間
-    public float bulletFireRate;                    //射撃レート　x/60s * 50fpsで記入
+    public bool hasBulletEffect;                    //エフェクトを持つかどうか
 
-
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
         BulletDestroy();
-
     }
 
     void BulletDestroy()
@@ -43,9 +33,19 @@ public class BulletController : MonoBehaviour {
         if (time > bulletDeathTime)
         {
             Destroy(gameObject);
+
+            if(hasBulletEffect == true)
+            {
+                StartCoroutine("setEffectStarter");
+            }
         }
     }
 
+    private IEnumerator setEffectStarter()
+    {
+        yield return new WaitForSeconds(bulletDeathTime);
+        gameObject.GetComponentInChildren<ParticleStarter>().StartParticle();
+    }
 
 
 }

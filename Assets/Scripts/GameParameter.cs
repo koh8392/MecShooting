@@ -24,25 +24,24 @@ namespace GameParameters
     //サブウェポンの種類
     public enum SubWeaponType
     { 
-        missilePod = 0,
-        rocketLauncher,
-        cannon,
+        cannon = 0,
         shield,
 
 
     }
 
     //弾丸の属性
-    public enum BulletSpecies
+    public enum bulletSpecies
     {
-        normal = 0,
+        none = 0,
+        normal,
         he,
         ap,
         beam,
     };
     /*ここまで*/
 
-        
+
 }
 
 
