@@ -514,7 +514,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1211269036738240
 GameObject:
   m_ObjectHideFlags: 1
@@ -1580,7 +1580,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1661351998930106
 GameObject:
   m_ObjectHideFlags: 1
@@ -1711,7 +1711,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1696378000535074
 GameObject:
   m_ObjectHideFlags: 1
@@ -2452,7 +2452,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1964797826997690
 GameObject:
   m_ObjectHideFlags: 1
@@ -7250,7 +7250,7 @@ Animator:
   m_GameObject: {fileID: 1709423074645640}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 0d31fcecf6b04f846b57d0b990dc992c, type: 3}
-  m_Controller: {fileID: 9100000, guid: 03a313246ae49cd49a2012b46db4eb4e, type: 2}
+  m_Controller: {fileID: 9100000, guid: d736ab2dc08b33a439cc7b61c85acefe, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -7305,7 +7305,9 @@ MonoBehaviour:
   - {fileID: 1627478987245394}
   - {fileID: 1090085104499050}
   isAutoShot: 0
-  magazineGage: 0
+  RemainMagazine: 0
+  subRemainMagazine: 0
+  PlayerUI: {fileID: 0}
 --- !u!114 &114573551136867172
 MonoBehaviour:
   m_ObjectHideFlags: 1

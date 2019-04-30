@@ -70,6 +70,7 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\DisplayController.cs" />
+    <Compile Include="Assets\EnemyUIController.cs" />
     <Compile Include="Assets\Scripts\AutoDestroy.cs" />
     <Compile Include="Assets\Scripts\BeamController.cs" />
     <Compile Include="Assets\Scripts\BeamManager.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Assets\Scripts\WarpOut.cs" />
     <Compile Include="Assets\Scripts\Weapondata.cs" />
     <Compile Include="Assets\Scripts\WingmateController.cs" />
+    <Compile Include="Assets\testplayer.cs" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>F:/作業ファイル/Github Projects/MecShooting/MecShooting/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

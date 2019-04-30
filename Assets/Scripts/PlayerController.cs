@@ -100,6 +100,7 @@ namespace PlayerControllerScript
         private float subMagazineConsumption;             //弾倉の発射時の消費量
         private float subBulletFireRate;                  //リロード間隔
 
+        [SerializeField]private GameObject PlayerUI;
 
         private bool isTouched;
 
@@ -164,6 +165,8 @@ namespace PlayerControllerScript
             boostGage = 0.0f;
             RemainMagazine = 0.0f;
             subRemainMagazine = 0.0f;
+
+            //PlayerUI.GetComponent<EnemyUIController>().ActivateUI(gameObject);
         }
 
 
@@ -559,6 +562,8 @@ namespace PlayerControllerScript
         //プレイヤーの攻撃に関する処理
         void PlayerSubShot()
         {
+
+            
             //マウス右ボタンを押している間orオート射撃がオンの際に射撃関数を実行する。
             if (Input.GetKey(KeyCode.Mouse1) || isAutoShot == true)
             {
@@ -566,7 +571,7 @@ namespace PlayerControllerScript
 
                 if (reloadSubWeaponTimer >= subBulletFireRate && subRemainMagazine >= subMagazineConsumption)
                 {
-
+                    Debug.Log("座標は" + transform.position);
                     if (subweaponType == SubWeaponType.cannon)
                     {
                         shotCannon();
