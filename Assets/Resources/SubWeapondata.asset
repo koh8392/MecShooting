@@ -20,7 +20,7 @@ MonoBehaviour:
     - L_Cannon
     - L_Cannonbarrel2
     - R_Cannonscope
-    muzzleOffset: {x: 0, y: 0, z: 0}
+    muzzleOffset: {x: 0.5, y: 0.3, z: 1.8}
     numOfBulletsPerMuzzle: 1
     idleMotionFlag: 
     shotMethodName: shotCannon

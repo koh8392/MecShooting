@@ -5,7 +5,7 @@ using GameParameters;
 
 
 
-public class BulletController : MonoBehaviour {
+public class BulletController : DelayScript {
 
     private GameObject player;   //プレイヤーの持続時間
     private float time;          //ローカル時間
@@ -15,6 +15,8 @@ public class BulletController : MonoBehaviour {
     public float bulletPower;                       //弾丸の威力
     public float bulletDeathTime;                   //弾丸の持続時間
     public bool hasBulletEffect;                    //エフェクトを持つかどうか
+    public bool hasSeeker;                          //追尾機能を持つかどうか
+    public float guideExtent;                       //追尾機能の強さ
 
     private GameObject effectCollision;
     [SerializeField]private float delayTime;
@@ -37,6 +39,7 @@ public class BulletController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         BulletDestroy();
+        
     }
 
     //時間経過での弾の消失処理
@@ -59,19 +62,26 @@ public class BulletController : MonoBehaviour {
                 //判定オブジェクトを有効化
                 transform.Find("ExplosionCollision").gameObject.SetActive(true);
                 //エフェクト再生後の弾の消滅処理を予約
-                StartCoroutine("DelayDestroyBullet", delayTime);
+                StartCoroutine(Delay(delayTime, () => {
+                    //弾丸のオブジェクト自体を削除
+                    Destroy(gameObject);
+                }));
+
+
                 //破壊処理はフラグで1回のみ行う
                 isDestroyed = true;
 
             }
         }
     }
+    private void SetTarget(GameObject Target) {
+        //GameObjectのターゲットをPlayerから受け取り座標を計算し、進行方向を決定。
+    }
 
-    private IEnumerator DelayDestroyBullet(float DelayTime)
+
+    private void SeekEnemy()
     {
-        yield return new WaitForSeconds(DelayTime);
-        //弾丸のオブジェクト自体を削除
-        Destroy(gameObject);
+        //前進しながら一定時間ごとに敵の位置に向けて進行方向を変更する。
     }
 
 
