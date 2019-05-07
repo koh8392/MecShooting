@@ -571,7 +571,7 @@ namespace PlayerControllerScript
 
                 if (reloadSubWeaponTimer >= subBulletFireRate && subRemainMagazine >= subMagazineConsumption)
                 {
-                    Debug.Log("座標は" + transform.position);
+                    
                     if (subweaponType == SubWeaponType.cannon)
                     {
                         shotCannon();
@@ -585,6 +585,9 @@ namespace PlayerControllerScript
 
         void shotCannon()
         {
+            //発射アニメーションを実行
+            playerAnimator.SetTrigger("Cannon_shot");
+
             //リロードタイマーを0にする
             reloadSubWeaponTimer = 0.0f;
 
@@ -606,8 +609,7 @@ namespace PlayerControllerScript
             //銃弾に力を加えて発射。
             bullet.GetComponent<Rigidbody>().DOMoveZ(transform.position.z + 100 , 2).SetEase(Ease.OutQuad);
 
-            //発射アニメーションを実行
-            //playerAnimator.SetTrigger("Rifle_shot");
+
         }
 
 

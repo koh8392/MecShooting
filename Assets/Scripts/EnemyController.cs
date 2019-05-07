@@ -25,6 +25,9 @@ public class EnemyController : MonoBehaviour {
     [SerializeField] public Vector3 enemySpawnOffset;   //敵の移動元の位置
     private Vector3 gameAreaPosition;
 
+    private bool enemyDamageFlag;
+    [SerializeField] private float damageRestTime;
+
     public enum EnemyState
     {
         StartMoving = 1,
@@ -111,7 +114,32 @@ public class EnemyController : MonoBehaviour {
             enemyCurrentHP = enemyCurrentHP - bulletPower;
             //Debug.Log("敵のHPは" + enemyCurrentHP);
         }
+
+        //敵に爆風が触れたら実行
+        if (other.gameObject.tag == "EnemyCollisionForParticle" && enemyDamageFlag == false)
+        {
+            //弾丸を消滅させ弾丸の威力分を敵のHPから減少させる
+            bulletPower = other.transform.root.gameObject.GetComponent<BulletController>().bulletPower;
+            enemyCurrentHP = enemyCurrentHP - bulletPower;
+            //Debug.Log("敵のHPは" + enemyCurrentHP);
+            enemyDamageFlag = true;
+            StartCoroutine("SetEnemyFlagReset");
+            Debug.Log("ここまで実行");
+        }
     }
+
+    private IEnumerator SetEnemyFlagReset()
+    {
+        yield return new WaitForSeconds(damageRestTime);
+        enemyDamageFlag = false;
+    }
+
+    public void SetEnemyParticleCollision()
+    {
+        Debug.Log("ここまで実行。");
+    }
+
+
 
     private void OnCollisionEnter(Collision collision )
     {
@@ -121,10 +149,9 @@ public class EnemyController : MonoBehaviour {
             Destroy(collision.gameObject);
         }
     }
-
+    
     private IEnumerator Wait()
     {
-
         //waitTime経過後に敵をデスポーン
         yield return new WaitForSeconds(waitTime);
         Destroy(gameObject);

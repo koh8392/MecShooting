@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 54370424534447328}
   - component: {fileID: 65239174259711556}
   - component: {fileID: 114705245808434702}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: DMG_Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -139,6 +139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentBullet: 1
   bulletPower: 1
-  bulletSpeed: 3500
   bulletDeathTime: 2
-  bulletFireRate: 200
+  hasBulletEffect: 0
+  delayTime: 0

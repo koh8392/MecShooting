@@ -39,7 +39,9 @@ public class EnemyUIController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         //追従状態であれば、毎フレーム対象オブジェクトとの位置合わせを行う。
-        if (isUIActive == true) { }
-        thisUIRectTransform.anchoredPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, targetTransform.position + offset);
+        if (isUIActive == true)
+        {
+            thisUIRectTransform.anchoredPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, targetTransform.position + offset);
+        }
 	}
 }

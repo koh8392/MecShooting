@@ -8,6 +8,7 @@ TagManager:
   - EnemyBullet
   - Wingmate
   - Enemy
+  - EnemyCollisionForParticle
   layers:
   - Default
   - TransparentFX
@@ -23,8 +24,8 @@ TagManager:
   - Wingmate
   - StartFX
   - Enemy
-  - 
-  - 
+  - Bullet
+  - EnemyCollisionForParticle
   - 
   - 
   - 

@@ -71,6 +71,8 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\DisplayController.cs" />
     <Compile Include="Assets\EnemyUIController.cs" />
+    <Compile Include="Assets\EventTest.cs" />
+    <Compile Include="Assets\EventTestEnter.cs" />
     <Compile Include="Assets\Scripts\AutoDestroy.cs" />
     <Compile Include="Assets\Scripts\BeamController.cs" />
     <Compile Include="Assets\Scripts\BeamManager.cs" />

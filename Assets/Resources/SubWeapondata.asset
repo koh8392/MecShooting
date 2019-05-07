@@ -29,6 +29,6 @@ MonoBehaviour:
     currentBullet: 2
     bulletPower: 1800
     bulletSpeed: 1500
-    bulletDeathTime: 3
+    bulletDeathTime: 2
     bulletFireRate: 3000
     hasBulletEffect: 1

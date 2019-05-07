@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 65930499203848568}
   - component: {fileID: 114970755653395686}
   - component: {fileID: 96186510554050560}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Rifle_Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -233,3 +233,5 @@ MonoBehaviour:
   currentBullet: 1
   bulletPower: 25
   bulletDeathTime: 4
+  hasBulletEffect: 0
+  delayTime: 0
