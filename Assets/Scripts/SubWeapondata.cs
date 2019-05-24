@@ -32,6 +32,9 @@ public class SubWeaponStatus
     //同時発射する弾丸の個数
     public int numOfBulletsPerMuzzle;
 
+    //弾丸ごとのオフセット
+    public Vector3 bulletOffset;
+
     //武器のモーション
     public string idleMotionFlag;
 
@@ -62,4 +65,8 @@ public class SubWeaponStatus
 
     //弾丸にエフェクト再生処理を行うかどうか
     public bool hasBulletEffect;
+
+    //弾丸が敵を追尾するかどうか
+    public bool hasSeeker;
+
 }

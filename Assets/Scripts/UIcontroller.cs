@@ -335,9 +335,16 @@ public class UIcontroller :  MonoBehaviour {
 
     }
 
-    public void weaponChangeButton()
+    //ボタンから受け取った武器切り替え情報をPlayerControllerに渡す処理
+    public void weaponChangeButton(WeaponType switchingWeaponType)
     {
-        playerController.weaponChange();
+        playerController.weaponChange(switchingWeaponType);
+    }
+
+    //ボタンから受け取ったサブ武器切り替え情報をPlayerControllerに渡す処理
+    public void subWeaponChangeButton(SubWeaponType switchingSubWeaponType)
+    {
+        playerController.subWeaponChange(switchingSubWeaponType);
     }
 
     public void exitButton()

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GameParameters;
 
 namespace GameParameters
 {
@@ -25,6 +24,7 @@ namespace GameParameters
     public enum SubWeaponType
     { 
         cannon = 0,
+        missile,
         shield,
 
 

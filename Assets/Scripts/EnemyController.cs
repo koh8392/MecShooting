@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : DelayScript {
 
     private Vector3 enemyPosition;                     //敵の位置(移動用)
     private Rigidbody enemyRigidBody;                  //敵の当たり判定
@@ -99,7 +99,9 @@ public class EnemyController : MonoBehaviour {
             gameManager.addScore(enemyScore);
             
             //一定時間経過後にオブジェクト自体を削除
-            StartCoroutine("Wait");
+            StartCoroutine(Delay(waitTime , () => {
+                Destroy(gameObject);
+            }));
         }
     }
 
@@ -119,24 +121,16 @@ public class EnemyController : MonoBehaviour {
         if (other.gameObject.tag == "EnemyCollisionForParticle" && enemyDamageFlag == false)
         {
             //弾丸を消滅させ弾丸の威力分を敵のHPから減少させる
+            Debug.Log(other.gameObject.name);
             bulletPower = other.transform.root.gameObject.GetComponent<BulletController>().bulletPower;
             enemyCurrentHP = enemyCurrentHP - bulletPower;
             //Debug.Log("敵のHPは" + enemyCurrentHP);
             enemyDamageFlag = true;
-            StartCoroutine("SetEnemyFlagReset");
+            StartCoroutine(Delay(damageRestTime , () => {
+                enemyDamageFlag = false;
+            }));
             Debug.Log("ここまで実行");
         }
-    }
-
-    private IEnumerator SetEnemyFlagReset()
-    {
-        yield return new WaitForSeconds(damageRestTime);
-        enemyDamageFlag = false;
-    }
-
-    public void SetEnemyParticleCollision()
-    {
-        Debug.Log("ここまで実行。");
     }
 
 
@@ -148,13 +142,6 @@ public class EnemyController : MonoBehaviour {
             //衝突判定時は弾がバウンドするので衝突時に削除
             Destroy(collision.gameObject);
         }
-    }
-    
-    private IEnumerator Wait()
-    {
-        //waitTime経過後に敵をデスポーン
-        yield return new WaitForSeconds(waitTime);
-        Destroy(gameObject);
     }
 
     public void setStateEnemyStart(float moveTime)

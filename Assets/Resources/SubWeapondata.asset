@@ -19,9 +19,11 @@ MonoBehaviour:
     listofVisualObjectName:
     - L_Cannon
     - L_Cannonbarrel2
+    - L_Cannonbarrel3
     - R_Cannonscope
     muzzleOffset: {x: 0.5, y: 0.3, z: 1.8}
     numOfBulletsPerMuzzle: 1
+    bulletOffset: {x: 0, y: 0, z: 0}
     idleMotionFlag: 
     shotMethodName: shotCannon
     bulletPrefabName: Cannon_Bullet
@@ -32,3 +34,24 @@ MonoBehaviour:
     bulletDeathTime: 2
     bulletFireRate: 3000
     hasBulletEffect: 1
+    hasSeeker: 0
+  - weaponName: Missile
+    numOfMuzzles: 2
+    listofMuzzleObjectName:
+    - TriLauncherL
+    - TriLauncherR
+    listofVisualObjectName: []
+    muzzleOffset: {x: 0, y: 0, z: 1.8}
+    numOfBulletsPerMuzzle: 1
+    bulletOffset: {x: 2, y: 0, z: 0}
+    idleMotionFlag: 
+    shotMethodName: shotMissile
+    bulletPrefabName: MissleBullet
+    bulletConsumption: 50
+    currentBullet: 2
+    bulletPower: 600
+    bulletSpeed: 1500
+    bulletDeathTime: 10
+    bulletFireRate: 3000
+    hasBulletEffect: 0
+    hasSeeker: 1

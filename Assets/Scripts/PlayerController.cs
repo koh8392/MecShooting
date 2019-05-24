@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using DG.Tweening;
 using GameParameters;
@@ -90,12 +91,16 @@ namespace PlayerControllerScript
         private SubWeaponType subweaponType;              //武器の種類
 
         private GameObject subBulletPrefab;               //弾丸のプレファブ
-        private float reloadSubWeaponTimer;                     //リロード用のタイマー
+        private float reloadSubWeaponTimer;               //リロード用のタイマー
 
         private GameObject subMuzzleObject_L;             //発射点のオブジェクト(左)
         private GameObject subMuzzleObject_R;             //発射点のオブジェクト(右)
         private Transform subMuzzleObject_L_transform;    //発射点オブジェクトのトランスフォーム(右)
         private Transform subMuzzleObject_R_transform;    //発射点オブジェクトトランスフォーム(左)
+        public List<GameObject> subWeaponMuzzleObjects;  //見た目上のオブジェクト
+        public List<GameObject> subWeaponVisualObjects;  //見た目上のオブジェクト
+        public GameObject[] lockOnObjects;
+        public List<GameObject> lockOnUIs;
 
         public float subRemainMagazine;                     //弾倉の残量
         private float subMagazineConsumption;             //弾倉の発射時の消費量
@@ -104,6 +109,8 @@ namespace PlayerControllerScript
         [SerializeField] private GameObject PlayerUI;
 
         private bool isTouched;
+
+        private RectTransform LockOnUIRectTransform;
 
         // Use this for initialization
         void Start()
@@ -168,6 +175,8 @@ namespace PlayerControllerScript
             subRemainMagazine = 0.0f;
 
             //PlayerUI.GetComponent<EnemyUIController>().ActivateUI(gameObject);
+
+            LockOnUIRectTransform = GameObject.Find("LockOnUI").GetComponent<RectTransform>();
         }
 
 
@@ -243,6 +252,7 @@ namespace PlayerControllerScript
             /*射撃に関する処理*ここまで*/
         }
 
+        //サブウェポンのデータの読み込み
         private void SetSubWeaponStatus(SubWeaponType subweaponType)
         {
 
@@ -253,33 +263,60 @@ namespace PlayerControllerScript
             //武器データのScriptableObject全体を読み込み
             subweaponData = Resources.Load<SubWeapondata>("SubWeapondata");
 
+            //武器データのScriptableObject内から現在の武器状態の物を読み込み。
             subweaponStatus = subweaponData.subWeaponStatusList[(int)subweaponType];
 
             Debug.Log("選択中の武器は" + subweaponStatus.weaponName);
 
-            /*武器データの読み込みに関する変数ここまで*/
+
 
             /*武器設定の読み込み処理*/
 
             //射出点の数を取得
             int numOfSubWeaponMuzzleObject = subweaponStatus.listofMuzzleObjectName.Count;
 
-            //射出点のオブジェクトのモデルを取得
-            string subMuzzleObjectName_L = "mechmodel/" + subweaponStatus.listofMuzzleObjectName[0];
-            subMuzzleObject_L = transform.Find(subMuzzleObjectName_L).gameObject;
+            //射出点のオブジェクトの名前が入ったリストを読み込み
+            List<string> listofSubMuzzleObjectName = subweaponStatus.listofMuzzleObjectName;
 
-            //射出点のオブジェクトのトランスフォームを取得
-            subMuzzleObject_L_transform = subMuzzleObject_L.GetComponent<Transform>();
-            subMuzzleObject_L.SetActive(true);
+            //射出点オブジェクトのリストを初期化
+            subWeaponMuzzleObjects.Clear();
+      
 
-            if (numOfSubWeaponMuzzleObject == 2)
+            foreach (string subMuzzleObjectName in listofSubMuzzleObjectName)
             {
-                string subMuzzleObjectName_R = "mechmodel/" + subweaponStatus.listofMuzzleObjectName[1];
-                subMuzzleObject_R = transform.Find(subMuzzleObjectName_R).gameObject;
-                subMuzzleObject_R_transform = subMuzzleObject_R.GetComponent<Transform>();
-                subMuzzleObject_R.SetActive(true);
+                //射出点オブジェクトのパスを設定
+                string subMuzzleObjectPass = "mechmodel/" + subMuzzleObjectName;
+                //射出点オブジェクトを取得
+                GameObject subMuzzleObject = transform.Find(subMuzzleObjectPass).gameObject;
+                //射出点のオブジェクトを有効化
+                subMuzzleObject.SetActive(true);
+
+                //射出点オブジェクトをリストに格納
+                subWeaponMuzzleObjects.Add(subMuzzleObject);
+            }
+
+
+            //表示オブジェクトの名前が入ったリストを読み込み
+            List<string> listofVisualObjectName = subweaponStatus.listofVisualObjectName;
+
+            //射出点オブジェクトのリストを初期化
+            subWeaponVisualObjects.Clear();
+
+            foreach (string visualObjectName in listofVisualObjectName)
+            {
+                
+                //見た目を切り替えるオブジェクトのパスを設定。
+                string visualObjectPass = "mechmodel/" + visualObjectName;
+                //見た目を切り替えるオブジェクトを取得
+                GameObject visualObject = transform.Find(visualObjectPass).gameObject;
+                //見た目のオブジェクトを有効化する
+                visualObject.SetActive(true);
+
+                //リストに見た目のオブジェクトを格納しておく
+                subWeaponVisualObjects.Add(visualObject);
 
             }
+
 
             //弾倉消費量を取得
             subMagazineConsumption = subweaponStatus.bulletConsumption;
@@ -563,22 +600,20 @@ namespace PlayerControllerScript
         //プレイヤーの攻撃に関する処理
         void PlayerSubShot()
         {
-
-
-            //マウス右ボタンを押している間orオート射撃がオンの際に射撃関数を実行する。
-            if (Input.GetKey(KeyCode.Mouse1) || isAutoShot == true)
+            //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
+            if (reloadSubWeaponTimer >= subBulletFireRate && subRemainMagazine >= subMagazineConsumption)
             {
-                //前回の発射からの経過時間(reloadTime)がリロードに掛かる時間(bulletFireRate)より長ければ発射処理を行う。
-
-                if (reloadSubWeaponTimer >= subBulletFireRate && subRemainMagazine >= subMagazineConsumption)
-                {
 
                     if (subweaponType == SubWeaponType.cannon)
                     {
                         shotCannon();
                     }
 
-                }
+
+                    if (subweaponType == SubWeaponType.missile)
+                    {
+                        shotMissile();
+                    }
 
             }
 
@@ -586,46 +621,148 @@ namespace PlayerControllerScript
 
         void shotCannon()
         {
-            //発射アニメーションを実行
-            playerAnimator.SetTrigger("Cannon_shot");
+            //マウスの右クリック(サブウェポンボタン)を押したとき
+            if (Input.GetMouseButtonDown(1))
+            { }
+            //マウスの右クリック(サブウェポンボタン)を離したとき
+            if (Input.GetMouseButtonUp(1))
+            {
+                //発射アニメーションを実行
+                playerAnimator.SetTrigger("Cannon_shot");
 
-            //リロードタイマーを0にする
-            reloadSubWeaponTimer = 0.0f;
+                //リロードタイマーを0にする
+                reloadSubWeaponTimer = 0.0f;
 
-            //射出前に弾倉ゲージを減らす
-            subRemainMagazine -= subMagazineConsumption;
+                //射出前に弾倉ゲージを減らす
+                subRemainMagazine -= subMagazineConsumption;
 
-            StartCoroutine(Delay(0.2f, () => {
-                //左の銃弾の生成
+                StartCoroutine(Delay(0.2f, () =>
+                {
+                    //左の銃弾の生成
+                    foreach (GameObject subMuzzleObject in subWeaponMuzzleObjects)
+                    {
+                        for (int bulletCount = 0; bulletCount <= subweaponStatus.numOfBulletsPerMuzzle; ++bulletCount) { }
+                        Vector3 subMuzzleObjectPosition = subMuzzleObject.transform.position;
 
-                //生成位置は射出点のオブジェクトにオフセット分ずらした座標
-                Vector3 subMuzzleObjectL_bulletPos = new Vector3(subMuzzleObject_L_transform.position.x + subweaponStatus.muzzleOffset.x,
-                                                      subMuzzleObject_L_transform.position.y + subweaponStatus.muzzleOffset.y,
-                                                      subMuzzleObject_L_transform.position.z + subweaponStatus.muzzleOffset.z);
+                        //生成位置は射出点のオブジェクトにオフセット分ずらした座標
+                        Vector3 subMuzzleObject_bulletPos = new Vector3(subMuzzleObjectPosition.x + subweaponStatus.muzzleOffset.x + subweaponStatus.bulletOffset.x,
+                                                                        subMuzzleObjectPosition.y + subweaponStatus.muzzleOffset.y + subweaponStatus.bulletOffset.y,
+                                                                        subMuzzleObjectPosition.z + subweaponStatus.muzzleOffset.z + subweaponStatus.bulletOffset.z);
 
-                //読み込んでいた弾丸のプレファブを生成
-                GameObject bullet = Instantiate(subBulletPrefab, subMuzzleObjectL_bulletPos, muzzleTransform.rotation) as GameObject;
+                        //読み込んでいた弾丸のプレファブを生成
+                        GameObject bullet = Instantiate(subBulletPrefab, subMuzzleObject_bulletPos, muzzleTransform.rotation) as GameObject;
 
-                setSubBulletStatusToInstance(bullet);
+                        setSubBulletStatusToInstance(bullet);
 
-                //銃弾に力を加えて発射。
-                bullet.GetComponent<Rigidbody>().DOMoveZ(transform.position.z + 100, 2).SetEase(Ease.OutQuad);
+                        //銃弾に力を加えて発射。
+                        bullet.GetComponent<Rigidbody>().DOMoveZ(transform.position.z + 100, 2).SetEase(Ease.OutQuad);
+                    }
 
-            }));
+
+                }));
+            }
         }
 
-        void shotMissle()
+        void shotMissile()
         {
-            //マウスの右クリック(サブウェポンボタン)が押し込まれたとき
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(1))
             {
+                bool keyDownFlag = false;
+
                 //タグ検索を行って、一番近い敵オブジェクトを取得する(近い方から順に配列に格納)
-                GameObject[] lockonObjects = GameObject.FindGameObjectsWithTag("Enemy");
-                //敵の位置のロックオンUIを表示させる
-                //マウスの右クリック(サブウェポンボタン)を離したとき
+                lockOnObjects = GameObject.FindGameObjectsWithTag("Enemy");
+                GameObject UICanvas = GameObject.Find("Canvas");
+
+                lockOnUIs = new List<GameObject>();
+
+                //キーダウン時の処理が未処理状態なら実行
+                if (keyDownFlag == false)
+                {
+                    //ロックオンしたオブジェクトに対してUiを表示する。
+                    foreach (GameObject lockonObject in lockOnObjects)
+                    {
+                        //Vector3 enemyPosition = lockonObject.transform.position;
+
+                        //取得したターゲットの座標をUI座標に変換
+                        RectTransform targetRectTransform = LockOnUIRectTransform;
+
+                        //ロックオンUIを読み込み
+                        GameObject targetUIprefab = (GameObject)Resources.Load("Prefabs/General/LockOnUI");
+
+                        //取得して置いた敵の座標にUIを表示する。
+                        GameObject targetUI = Instantiate(targetUIprefab, targetRectTransform);
+                        //生成したUIをcanvasの子にする。
+                        targetUI.transform.SetParent(UICanvas.transform, false);
+                        //生成したUIをリストに格納して置く(あとで削除する時のため)
+                        lockOnUIs.Add(targetUI);
+
+                        //UIの位置を敵に合わせる。
+                        targetRectTransform.anchoredPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, lockonObject.transform.position);
+
+                        //残りの追従はUi側のスクリプトで行う。
+                        //取得したlockonObjectを渡して引数で管理。
+
+                    }
+
+                    //キーダウン時の処理を実行済みに
+                    keyDownFlag = true;
+                }
+            }
+
+            //マウスの右クリック(サブウェポンボタン)を離したとき
+            if (Input.GetMouseButtonUp(1))
+            {
                 //弾の生成を同時発射数の分だけforで回す。
+
+
+                foreach (GameObject subMuzzleObject in subWeaponMuzzleObjects)
+                {
+                    for (int bulletCount = 0; bulletCount <= subweaponStatus.numOfBulletsPerMuzzle; ++bulletCount) { }
+                    Vector3 subMuzzleObjectPosition = subMuzzleObject.transform.position;
+
+                    //生成位置は射出点のオブジェクトにオフセット分ずらした座標
+                    Vector3 subMuzzleObject_bulletPos = new Vector3(subMuzzleObjectPosition.x + subweaponStatus.muzzleOffset.x + subweaponStatus.bulletOffset.x,
+                                                                    subMuzzleObjectPosition.y + subweaponStatus.muzzleOffset.y + subweaponStatus.bulletOffset.y,
+                                                                    subMuzzleObjectPosition.z + subweaponStatus.muzzleOffset.z + subweaponStatus.bulletOffset.z);
+
+                    Debug.Log(subBulletPrefab.name);
+
+                    //読み込んでいた弾丸のプレファブを生成
+                    GameObject bullet = Instantiate(subBulletPrefab, subMuzzleObject_bulletPos, muzzleTransform.rotation) as GameObject;
+
+                    setSubBulletStatusToInstance(bullet);
+
+                    BulletController selectedBulletController = bullet.GetComponent<BulletController>();
+
+                    GameObject targetEnemy = lockOnObjects[0];
+
+                    selectedBulletController.SetTarget(targetEnemy);
+
+
+                    //銃弾に力を加えて発射。
+                    bullet.GetComponent<Rigidbody>().DOMoveZ(transform.position.z + 100, 2).SetEase(Ease.OutQuad);
+
+
+                }
+
+                //重複表示されないように、発射時にロックオン表示を全て破棄する。
+                foreach(GameObject lockOnUI in lockOnUIs)
+                {
+                    //リストに入っているUIを破棄
+                    Destroy(lockOnUI);
+                }
+
+                //全てロックオン表示を消したらリストを初期化
+                lockOnUIs.Clear();
+
+
                 //同時にターゲットのgameObjectと弾のデータを渡す
                 //初期無誘導射出のためのaddforceを行う
+                //ロックオンUIを削除する。
+
+
+            
+
             }
         }
 
@@ -633,6 +770,11 @@ namespace PlayerControllerScript
         //弾丸に情報を設定する処理。引数：弾丸のGameobject
         private void setSubBulletStatusToInstance(GameObject selectedBullet)
         {
+
+            Debug.Log(subweaponStatus.weaponName);
+
+            Debug.Log(subweaponStatus.currentBullet);
+
             //対象のbulletのbulletcontrollerを取得
             BulletController selectedBulletController = selectedBullet.GetComponent<BulletController>();
 
@@ -804,20 +946,15 @@ namespace PlayerControllerScript
             {
                 playerCurrentHP -= 20;
                 isTouched = true;
-                StartCoroutine("setTouchFlag");
+                StartCoroutine(Delay(1.0f , () => {
+                    isTouched = false;
+                }));
 
-                Debug.Log("敵と接触。現在のHPは" + playerCurrentHP);
             }
         }
 
-        private IEnumerator setTouchFlag()
-        {
-            yield return new WaitForSeconds(1.0f);
-            isTouched = false;
-        }
-
         //武器を切り替える処理
-        public void weaponChange()
+        public void weaponChange(WeaponType switchingWeaponType)
         {
             //現在の装備の見た目をオフに
             muzzleObject_L.SetActive(false);
@@ -845,6 +982,44 @@ namespace PlayerControllerScript
 
         }
 
+
+        //武装変更処理の前段階
+        public void subWeaponChange(SubWeaponType switchingSubWeaponType)
+        {
+            //現在の装備の見た目をオフに
+            muzzleObject_L.SetActive(false);
+            muzzleObject_R.SetActive(false);
+
+            //表示オブジェクトの名前が入ったリストを読み込み
+            List<string> listofVisualObjectName = subweaponStatus.listofVisualObjectName;
+
+            foreach (string visualObjectName in listofVisualObjectName)
+            {
+                //見た目を切り替えるオブジェクトのパスを設定。
+                string visualObjectPass = "mechmodel/" + visualObjectName;
+                //見た目を切り替えるオブジェクトを取得
+                GameObject visualObject = transform.Find(visualObjectPass).gameObject;
+                //見た目のオブジェクトを有効化する
+                visualObject.SetActive(false);
+
+                //配列に見た目のオブジェクトを格納しておく
+                //subWeaponVisualObjects.Add(visualObject);
+
+            }
+
+            playerAnimator.SetBool(weaponStatus.idleMotionFlag, false);
+
+
+
+            /*武器データの読み込みに関する変数*/
+            //武器の種類を設定
+            subweaponType = switchingSubWeaponType;
+
+            SetSubWeaponStatus(subweaponType);
+
+
+        }
+
         //自動射撃のオンオフを切り替えるセッター
         public void setAutoShot()
         {
@@ -859,14 +1034,6 @@ namespace PlayerControllerScript
                 isAutoShot = false;
             }
         }
-
-        /*
-        private IEnumerator Delay(float waitTime, UnityAction Action)
-        {
-            yield return new WaitForSeconds(waitTime);
-            Action();
-        }
-        */
 
     }
 }

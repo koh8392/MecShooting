@@ -14,6 +14,7 @@ public class BulletController : DelayScript {
     public bulletSpecies currentBullet;             //弾丸の属性
     public float bulletPower;                       //弾丸の威力
     public float bulletDeathTime;                   //弾丸の持続時間
+    public float bulletSpeed;                       //弾丸の速さ
     public bool hasBulletEffect;                    //エフェクトを持つかどうか
     public bool hasSeeker;                          //追尾機能を持つかどうか
     public float guideExtent;                       //追尾機能の強さ
@@ -23,9 +24,12 @@ public class BulletController : DelayScript {
 
     private bool isDestroyed;
 
+    private GameObject targetObject;
+
     // Use this for initialization
     void Start () {
         isDestroyed = false;
+        bulletSpeed = 1;
 
         if (hasBulletEffect == true)
         {
@@ -42,9 +46,18 @@ public class BulletController : DelayScript {
         
     }
 
+    private void FixedUpdate()
+    {
+        if(hasSeeker == true)
+        {
+            SeekEnemy();
+        }
+    }
+
     //時間経過での弾の消失処理
     void BulletDestroy()
     {
+        
         //弾丸の消失処理
         time += Time.deltaTime;
         if (time > (bulletDeathTime - 0.4f) && isDestroyed == false)
@@ -74,14 +87,20 @@ public class BulletController : DelayScript {
             }
         }
     }
-    private void SetTarget(GameObject Target) {
+    public void SetTarget(GameObject target) {
         //GameObjectのターゲットをPlayerから受け取り座標を計算し、進行方向を決定。
+        targetObject = target;
+        transform.LookAt(targetObject.transform);
+        hasSeeker = true;
+        Debug.Log(bulletDeathTime);
     }
 
 
     private void SeekEnemy()
     {
         //前進しながら一定時間ごとに敵の位置に向けて進行方向を変更する。
+        transform.LookAt(targetObject.transform);
+        gameObject.transform.Translate(new Vector3(0, 0, bulletSpeed));
     }
 
 

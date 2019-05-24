@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 23984799260439178}
   - component: {fileID: 65500554730284084}
   - component: {fileID: 54741064876087146}
+  - component: {fileID: 114684811130340376}
   m_Layer: 14
   m_Name: MissleBullet
   m_TagString: Bullet
@@ -173,7 +174,7 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1892850109325018}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -278,6 +279,25 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114684811130340376
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1476209387480904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac531a71922c5604e92033a92015be94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentBullet: 0
+  bulletPower: 0
+  bulletDeathTime: 0
+  bulletSpeed: 0
+  hasBulletEffect: 0
+  hasSeeker: 0
+  guideExtent: 0
+  delayTime: 0
 --- !u!114 &114880561745946258
 MonoBehaviour:
   m_ObjectHideFlags: 1

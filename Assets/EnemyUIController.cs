@@ -27,7 +27,6 @@ public class EnemyUIController : MonoBehaviour {
     public void ActivateUI(GameObject targetObject)
     {
         //引数で渡されたgameObjectがnullになっていないか確認
-        Debug.Log(targetObject.name);
         //位置合わせを取得したいオブジェクトのtransformを参照しておく
         targetTransform = targetObject.GetComponent<Transform>();
         //位置合わせ状態のフラグをオン
